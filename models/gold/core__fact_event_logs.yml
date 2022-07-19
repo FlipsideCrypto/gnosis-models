@@ -1,0 +1,38 @@
+version: 2
+models:
+  - name: core__fact_event_logs
+    description: '{{ doc("gno_logs_table_doc") }}'
+
+    columns:
+      - name: BLOCK_NUMBER
+        description: '{{ doc("gno_block_number") }}'   
+      - name: BLOCK_TIMESTAMP
+        description: '{{ doc("gno_block_timestamp") }}'
+      - name: TX_HASH
+        description: '{{ doc("gno_logs_tx_hash") }}'
+      - name: EVENT_INDEX
+        description: '{{ doc("gno_event_index") }}'
+      - name: CONTRACT_ADDRESS
+        description: '{{ doc("gno_logs_contract_address") }}'
+      - name: CONTRACT_NAME
+        description: '{{ doc("gno_logs_contract_name") }}'
+      - name: EVENT_NAME
+        description: '{{ doc("gno_event_name") }}'
+      - name: EVENT_INPUTS
+        description: '{{ doc("gno_event_inputs") }}'
+      - name: TOPICS
+        description: '{{ doc("gno_topics") }}'
+      - name: DATA
+        description: '{{ doc("gno_logs_data") }}'
+      - name: EVENT_REMOVED
+        description: '{{ doc("gno_event_removed") }}'  
+      - name: _LOG_ID
+        description: '{{ doc("gno_log_id_events") }}'  
+      - name: TX_STATUS
+        description: '{{ doc("gno_tx_status") }}' 
+      - name: ORIGIN_FUNCTION_SIGNATURE
+        description: '{{ doc("gno_origin_sig") }}'
+      - name: ORIGIN_FROM_ADDRESS
+        description: '{{ doc("gno_origin_from") }}'
+      - name: ORIGIN_TO_ADDRESS
+        description: '{{ doc("gno_origin_to") }}'

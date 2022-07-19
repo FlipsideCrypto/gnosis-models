@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: prod
+    database: chainwalkers
+    schema: prod
+    tables:
+      - name: gnosis_blocks
+      - name: gnosis_txs
+  - name: crosschain
+    database: flipside_prod_db
+    schema: crosschain
+    tables:
+      - name: address_labels
