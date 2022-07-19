@@ -39,7 +39,7 @@ models:
           - dbt_expectations.expect_column_values_to_match_regex:
               regex: 0[xX][0-9a-fA-F]+
       - name: AMOUNT
-        description: '{{ doc("gno_eth_amount") }}'
+        description: '{{ doc("gno_xdai_amount") }}'
         tests:
           - not_null
           - dbt_expectations.expect_column_values_to_be_in_type_list:
@@ -47,7 +47,7 @@ models:
                 - NUMBER    
                 - FLOAT  
       - name: AMOUNT_USD
-        description: '{{ doc("gno_eth_amount_usd") }}' 
+        description: '{{ doc("gno_xdai_amount_usd") }}' 
         tests:
           - not_null:
               where: BLOCK_TIMESTAMP::date > '2021-01-01'
