@@ -96,14 +96,14 @@ SELECT
     A.to_address AS eth_to_address,
     A.xdai_value AS amount,
     ROUND(
-        A.xdai_value * eth_price,
+        A.xdai_value * dai_price,
         2
     ) AS amount_usd,
     _call_id,
     _inserted_timestamp
 FROM
     eth_base A
-    LEFT JOIN eth_price
+    LEFT JOIN dai_price
     ON DATE_TRUNC(
         'hour',
         block_timestamp
