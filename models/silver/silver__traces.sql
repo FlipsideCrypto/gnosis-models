@@ -70,6 +70,7 @@ traces_flat AS (
         VALUE :to :: STRING AS to_address,
         VALUE :type :: STRING AS TYPE,
         VALUE :traceAddress AS traceAddress,
+        VALUE: subtraces :: INTEGER AS sub_traces,
         CASE
             WHEN VALUE :type :: STRING IN (
                 'call',
@@ -101,6 +102,7 @@ SELECT
     input,
     output,
     UPPER(TYPE) AS TYPE,
+    sub_traces,
     REPLACE(REPLACE(REPLACE(traceAddress :: STRING, ']'), '['), ',', '_') AS id,
     CASE
         WHEN INDEX = 0 THEN 'CALL_ORIGIN'

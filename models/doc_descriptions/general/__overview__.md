@@ -29,7 +29,9 @@ The documentation included here details the design of the Gnosis tables and view
 - [fact_event_logs](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.core__fact_event_logs)
 - [fact_traces](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.core__fact_traces)
 - [fact_transactions](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.core__fact_transactions)
+- [fact_token_transfers](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.core__fact_token_transfers)
 - [dim_labels](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.core__dim_labels)
+- [ez_xdai_transfers](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.core__ez_xdai_transfers)
 
 ## **Data Model Overview**
 
