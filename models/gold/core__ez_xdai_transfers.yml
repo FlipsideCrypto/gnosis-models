@@ -1,0 +1,65 @@
+version: 2
+models:
+  - name: core__ez_xdai_transfers
+    description: '{{ doc("gno_ez_xdai_transfers_table_doc") }}'
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - _CALL_ID
+      
+    columns:
+      - name: BLOCK_NUMBER
+        description: '{{ doc("gno_block_number") }}'
+      - name: BLOCK_TIMESTAMP
+        description: '{{ doc("gno_block_timestamp") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - TIMESTAMP_NTZ   
+      - name: TX_HASH
+        description: '{{ doc("gno_transfer_tx_hash") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: 0[xX][0-9a-fA-F]+
+      - name: ETH_FROM_ADDRESS
+        description: '{{ doc("gno_transfer_from_address") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: 0[xX][0-9a-fA-F]+
+      - name: ETH_TO_ADDRESS
+        description: '{{ doc("gno_transfer_to_address") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: 0[xX][0-9a-fA-F]+
+      - name: AMOUNT
+        description: '{{ doc("gno_xdai_amount") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - NUMBER    
+                - FLOAT  
+      - name: AMOUNT_USD
+        description: '{{ doc("gno_xdai_amount_usd") }}' 
+        tests:
+          - not_null:
+              where: BLOCK_TIMESTAMP::date > '2021-01-01'
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - NUMBER    
+                - FLOAT  
+      - name: ORIGIN_FUNCTION_SIGNATURE
+        description: '{{ doc("gno_tx_origin_sig") }}'
+      - name: ORIGIN_FROM_ADDRESS
+        description: '{{ doc("gno_eth_origin_from") }}'
+      - name: ORIGIN_TO_ADDRESS
+        description: '{{ doc("gno_eth_origin_to") }}'
+      - name: IDENTIFIER
+        description: '{{ doc("gno_traces_identifier") }}'
