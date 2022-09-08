@@ -1,5 +1,5 @@
 {% docs eth_dex_swaps_sender %}
 
-The Router is the Sender in the swap function. 
+The router is the sender in the swap function. 
 
 {% enddocs %}

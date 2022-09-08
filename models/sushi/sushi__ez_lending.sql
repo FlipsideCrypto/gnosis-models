@@ -181,8 +181,8 @@ AND HOUR :: DATE IN (
   AND HOUR :: DATE >= '2021-09-01'
 {% endif %}
 GROUP BY
-  1,
-  2
+  symbol,
+  HOUR
 ),
 labels AS (
   SELECT
@@ -234,7 +234,6 @@ SELECT
   A.symbol,
   A._log_id,
   CASE
-    --
     WHEN C.price IS NULL THEN NULL
     WHEN A.asset_Decimals IS NULL THEN NULL
     ELSE (
