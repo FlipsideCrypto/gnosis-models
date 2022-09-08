@@ -13,6 +13,6 @@
         token1_decimals
     FROM
          {{ source(
-            'avalanche_pools',
+            'gnosis_pools',
             'SUSHI_DIM_DEX_POOLS'
         ) }} 

@@ -18,6 +18,6 @@ models:
       - name: COLLATERAL_ADDRESS
         description: '{{ doc("collateral_address") }}'
       - name: ASSET_DECIMALS   
-        description: '{{ doc("avax_decimals") }}'
+        description: '{{ doc("gno_decimals") }}'
       - name: COLLATERAL_DECIMALS
-        description: '{{ doc("avax_decimals") }}'
+        description: '{{ doc("gno_decimals") }}'

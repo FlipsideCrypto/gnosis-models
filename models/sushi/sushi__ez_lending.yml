@@ -1,7 +1,8 @@
 version: 2
 models:
-  - name: sushi__ez_borrowing
-    description: 'This is a table that shows all the events on gnosis chain that are related to Borrowing or repaying the loan for sushi'
+  - name: sushi__ez_lending
+    description: 'This is a table that shows all the events on gnosis chain that are related to providing capital for depositing/withdrawing capital to/from sushi lending pools'
+
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
@@ -21,7 +22,7 @@ models:
           - not_null
           - dbt_expectations.expect_row_values_to_have_recent_data:
               datepart: day
-              interval: 75 #borrowing transactions are not very frequent
+              interval: 75 #lending transactions are not very frequent
           - dbt_expectations.expect_column_values_to_be_in_type_list:
               column_type_list:
                 - TIMESTAMP_NTZ
@@ -40,10 +41,10 @@ models:
               regex: 0[xX][0-9a-fA-F]+
 
       - name: ACTION
-        description: '{{ doc("borrow_action") }}'
+        description: '{{ doc("lending_action") }}'
 
-      - name: AMOUNT
-        description: '{{ doc("borrow_amount") }}'
+      - name: ASSET_AMOUNT
+        description: '{{ doc("lending_amount") }}'
         tests:
           - not_null
           - dbt_expectations.expect_column_values_to_be_in_type_list:
@@ -51,8 +52,8 @@ models:
                 - NUMBER
                 - FLOAT
 
-      - name: AMOUNT_USD
-        description: '{{ doc("borrow_amount_usd") }}'
+      - name: ASSET_AMOUNT_USD
+        description: '{{ doc("lending_amount_usd") }}'
         tests:
           - dbt_expectations.expect_column_values_to_be_in_type_list:
               column_type_list:
@@ -60,7 +61,7 @@ models:
                 - FLOAT
 
       - name: ASSET
-        description: '{{ doc("borrow_asset") }}'
+        description: '{{ doc("lending_asset") }}'
         tests:
           - not_null
           - dbt_expectations.expect_column_values_to_match_regex:
@@ -68,7 +69,7 @@ models:
 
 
       - name: SYMBOL
-        description: '{{ doc("borrow_symbol") }}'
+        description: '{{ doc("lending_symbol") }}'
         tests:
           - dbt_expectations.expect_column_values_to_be_in_type_list:
               column_type_list:
@@ -76,12 +77,20 @@ models:
                 - VARCHAR
 
 
-      - name: Borrower
-        description: '{{ doc("borrower") }}'
+      - name: DEPOSITOR
+        description: '{{ doc("lending_depositor") }}'
         tests:
           - not_null
           - dbt_expectations.expect_column_values_to_match_regex:
               regex: 0[xX][0-9a-fA-F]+
+
+      - name: EVENT_INDEX
+        description: '{{ doc("gno_event_index") }}'
+        tests:
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - NUMBER
+                - FLOAT
 
       - name: _LOG_ID
         description: '{{ doc("gno_log_id_events") }}'
@@ -104,8 +113,7 @@ models:
         description: '{{ doc("lending_lending_pool") }}'
         tests:
           - not_null
-      - name: BORROWER_IS_A_CONTRACT
-        description: '{{ doc("lending_borrower_is_a_contract") }}'
+      - name: LENDER_IS_A_CONTRACT
+        description: '{{ doc("lending_lender_is_a_contract") }}'
         tests:
           - not_null
-

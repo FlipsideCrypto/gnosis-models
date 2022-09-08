@@ -13,6 +13,6 @@
         collateral_token_decimals as collateral_decimals  
     FROM
          {{ source(
-            'avalanche_pools',
+            'gnosis_pools',
             'SUSHI_DIM_KASHI_PAIRS'
         ) }} 

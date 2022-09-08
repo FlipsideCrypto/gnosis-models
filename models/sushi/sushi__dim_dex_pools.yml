@@ -14,10 +14,10 @@ models:
       - name: TOKEN1_ADDRESS
         description: '{{ doc("eth_dex_token1") }}' 
       - name: TOKEN0_SYMBOL
-        description: '{{ doc("avax_symbol") }}'
+        description: '{{ doc("gno_symbol") }}'
       - name: TOKEN1_SYMBOL
-        description: '{{ doc("avax_symbol") }}'
+        description: '{{ doc("gno_symbol") }}'
       - name: TOKEN0_DECIMALS   
-        description: '{{ doc("avax_decimals") }}'
+        description: '{{ doc("gno_decimals") }}'
       - name: TOKEN1_DECIMALS
-        description: '{{ doc("avax_decimals") }}'
+        description: '{{ doc("gno_decimals") }}'
