@@ -1,5 +1,5 @@
 {% docs eth_dex_lp_table_doc %}
 
-This table contains details on different Liquidity Pools belonging to sushiswap on the Avalanche blockchain
+This table contains details on different Liquidity Pools belonging to sushiswap on the gnosis blockchain
 
 {% enddocs %}

@@ -1,7 +1,7 @@
 version: 2
 models:
   - name: sushi__dim_kashi_pairs
-    description: 'This table contains details on different Kashi pairs belonging to sushiswap on the Avalanche blockchain'
+    description: 'This table contains details on different Kashi pairs belonging to sushiswap on the gnosis blockchain'
        
 
     columns:
