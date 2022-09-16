@@ -20,7 +20,7 @@ WITH borrow_txns AS (
 {% if is_incremental() %}
 AND _inserted_timestamp :: DATE >= (
   SELECT
-    MAX(_inserted_timestamp) :: DATE 
+    MAX(_inserted_timestamp) :: DATE
   FROM
     {{ this }}
 )
@@ -38,7 +38,7 @@ repay_txns AS (
 {% if is_incremental() %}
 AND _inserted_timestamp :: DATE >= (
   SELECT
-    MAX(_inserted_timestamp) :: DATE 
+    MAX(_inserted_timestamp) :: DATE
   FROM
     {{ this }}
 )
@@ -56,7 +56,7 @@ add_asset AS (
 {% if is_incremental() %}
 AND _inserted_timestamp :: DATE >= (
   SELECT
-    MAX(_inserted_timestamp) :: DATE 
+    MAX(_inserted_timestamp) :: DATE
   FROM
     {{ this }}
 )
@@ -74,7 +74,7 @@ remove_asset AS (
 {% if is_incremental() %}
 AND _inserted_timestamp :: DATE >= (
   SELECT
-    MAX(_inserted_timestamp) :: DATE 
+    MAX(_inserted_timestamp) :: DATE
   FROM
     {{ this }}
 )
@@ -121,7 +121,7 @@ borrow AS (
 {% if is_incremental() %}
 AND _inserted_timestamp :: DATE >= (
   SELECT
-    MAX(_inserted_timestamp) :: DATE 
+    MAX(_inserted_timestamp) :: DATE
   FROM
     {{ this }}
 )
@@ -168,7 +168,7 @@ add_coll_same_txn AS (
 {% if is_incremental() %}
 AND _inserted_timestamp :: DATE >= (
   SELECT
-    MAX(_inserted_timestamp) :: DATE 
+    MAX(_inserted_timestamp) :: DATE
   FROM
     {{ this }}
 )
@@ -215,7 +215,7 @@ repay AS (
 {% if is_incremental() %}
 AND _inserted_timestamp :: DATE >= (
   SELECT
-    MAX(_inserted_timestamp) :: DATE 
+    MAX(_inserted_timestamp) :: DATE
   FROM
     {{ this }}
 )
@@ -262,7 +262,7 @@ remove_coll_same_txn AS (
 {% if is_incremental() %}
 AND _inserted_timestamp :: DATE >= (
   SELECT
-    MAX(_inserted_timestamp) :: DATE 
+    MAX(_inserted_timestamp) :: DATE
   FROM
     {{ this }}
 )
@@ -321,7 +321,7 @@ add_coll_in_separate_txn AS (
 {% if is_incremental() %}
 AND _inserted_timestamp :: DATE >= (
   SELECT
-    MAX(_inserted_timestamp) :: DATE 
+    MAX(_inserted_timestamp) :: DATE
   FROM
     {{ this }}
 )
@@ -380,7 +380,7 @@ remove_coll_in_separate_txn AS (
 {% if is_incremental() %}
 AND _inserted_timestamp :: DATE >= (
   SELECT
-    MAX(_inserted_timestamp) :: DATE 
+    MAX(_inserted_timestamp) :: DATE
   FROM
     {{ this }}
 )
@@ -441,52 +441,27 @@ AND HOUR :: DATE IN (
   SELECT
     DISTINCT block_timestamp :: DATE
   FROM
-   (select * from borrow
-   UNION
-   select * from repay
-   UNION
-   select * from add_coll_in_separate_txn
-   UNION
-   select * from remove_coll_in_separate_txn)
-)
-{% else %}
-  AND HOUR :: DATE >= '2021-09-01'
-{% endif %}
-GROUP BY
-  1,
-  2
-),
-collateral_prices AS (
-  SELECT
-    symbol,
-    DATE_TRUNC(
-      'hour',
-      recorded_at
-    ) AS HOUR,
-    AVG(price) AS collateral_price
-  FROM
-    {{ source(
-      'flipside_prod_db',
-      'prices_v2'
-    ) }} A
-    JOIN {{ ref('sushi__dim_kashi_pairs') }}
-    b
-    ON A.symbol = b.collateral_symbol
-  WHERE
-    1 = 1
-
-{% if is_incremental() %}
-AND HOUR :: DATE IN (
-  SELECT
-    DISTINCT block_timestamp :: DATE
-  FROM
-  (select * from borrow
-   UNION
-   select * from repay
-   UNION
-   select * from add_coll_in_separate_txn
-   UNION
-   select * from remove_coll_in_separate_txn)
+    (
+      SELECT
+        *
+      FROM
+        borrow
+      UNION
+      SELECT
+        *
+      FROM
+        repay
+      UNION
+      SELECT
+        *
+      FROM
+        add_coll_in_separate_txn
+      UNION
+      SELECT
+        *
+      FROM
+        remove_coll_in_separate_txn
+    )
 )
 {% else %}
   AND HOUR :: DATE >= '2021-09-01'
@@ -558,10 +533,10 @@ SELECT
   A.amount,
   CASE
     WHEN action = 'add collateral' THEN (
-      A.amount * d.collateral_price
+      A.amount * C.price
     )
     WHEN action = 'Remove collateral' THEN (
-      A.amount * d.collateral_price
+      A.amount * C.price
     )
     ELSE (
       A.amount * C.price
@@ -577,9 +552,4 @@ FROM
     'hour',
     A.block_timestamp
   ) = C.hour
-  LEFT JOIN collateral_prices d
-  ON A.symbol = d.symbol
-  AND DATE_TRUNC(
-    'hour',
-    A.block_timestamp
-  ) = d.hour
+
