@@ -19,7 +19,7 @@ models:
         description: '{{ doc("gno_block_timestamp") }}'
         tests:
           - not_null
-          # Removing this due to infrequency of transactions
+          # Removing the recency test due to infrequency of transactions
           - dbt_expectations.expect_column_values_to_be_in_type_list:
               column_type_list:
                 - TIMESTAMP_NTZ
