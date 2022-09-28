@@ -19,9 +19,10 @@ models:
         description: '{{ doc("gno_block_timestamp") }}'
         tests:
           - not_null
-          - dbt_expectations.expect_row_values_to_have_recent_data:
-              datepart: day
-              interval: 75 #borrowing transactions are not very frequent
+          # Removing this due to infrequency of transactions
+          # - dbt_expectations.expect_row_values_to_have_recent_data:
+          #     datepart: day
+          #     interval: 75 
           - dbt_expectations.expect_column_values_to_be_in_type_list:
               column_type_list:
                 - TIMESTAMP_NTZ
