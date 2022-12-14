@@ -154,12 +154,14 @@ total AS (
  prices AS (
     select 
         symbol,
-        date_trunc('hour',recorded_at) as hour, 
-        avg(price) as price 
+        date_trunc('hour',recorded_hour) as hour, 
+        avg(open) as price 
     from 
-        {{ source('flipside_prod_db','prices_v2') }} a 
+    {{ source('crosschain','dim_asset_metadata') }} a 
     join {{ ref('sushi__dim_dex_pools') }} b
     on a.symbol = b.token0_symbol
+    join {{ source('crosschain','fact_hourly_prices') }} c
+    on a.id = c.id
     WHERE
         1 = 1
 
@@ -188,9 +190,17 @@ SELECT
     pool_name,
     event_name,
     amount_in,
-    amount_in * pIn.price as amount_in_usd,
+    case
+    WHEN symbol_in = 'WXDAI' then  amount_in * pIn.price 
+    when amount_in * pIn.price <= 5 * amount_out * pOut.price THEN amount_in * pIn.price
+    ELSE NULL
+    END AS amount_in_usd,
     amount_out,
-    amount_out * pOut.price as amount_out_usd,
+    CASE
+    WHEN symbol_out = 'WXDAI' then amount_out * pOut.price
+    when amount_out * pOut.price <= 5 * amount_in * pIn.price THEN amount_out * pOut.price
+    ELSE NULL
+    END AS amount_out_usd,
     sender,
     tx_to,
     event_index,
