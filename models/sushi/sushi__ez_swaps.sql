@@ -188,9 +188,17 @@ SELECT
     pool_name,
     event_name,
     amount_in,
-    amount_in * pIn.price as amount_in_usd,
+    case
+    WHEN symbol_in = 'WXDAI' then  amount_in * pIn.price 
+    when amount_in * pIn.price <= 5 * amount_out * pOut.price THEN amount_in * pIn.price
+    ELSE NULL
+    END AS amount_in_usd,
     amount_out,
-    amount_out * pOut.price as amount_out_usd,
+    CASE
+    WHEN symbol_out = 'WXDAI' then amount_out * pOut.price
+    when amount_out * pOut.price <= 5 * amount_in * pIn.price THEN amount_out * pOut.price
+    ELSE NULL
+    END AS amount_out_usd,
     sender,
     tx_to,
     event_index,
