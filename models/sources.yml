@@ -28,3 +28,13 @@ sources:
     schema: SILVER
     tables:
       - name: prices_v2
+  - name: streamline_crosschain
+    database: streamline
+    schema: crosschain
+    tables: 
+      - name: node_mapping
+  - name: crosschain_silver
+    database: crosschain
+    schema: silver
+    tables:
+      - name: apis_keys
