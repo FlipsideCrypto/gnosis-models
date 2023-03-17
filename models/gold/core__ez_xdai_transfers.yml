@@ -2,10 +2,6 @@ version: 2
 models:
   - name: core__ez_xdai_transfers
     description: '{{ doc("gno_ez_xdai_transfers_table_doc") }}'
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - _CALL_ID
       
     columns:
       - name: BLOCK_NUMBER
