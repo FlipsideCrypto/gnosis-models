@@ -18,7 +18,8 @@ SELECT
     ROUND(
         A.xdai_value * price,
         2
-    ) AS amount_usd
+    ) AS amount_usd,
+    _call_id
 FROM
     {{ ref('silver__traces') }} A
     LEFT JOIN {{ ref('silver__prices') }}
