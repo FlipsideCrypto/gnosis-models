@@ -22,7 +22,7 @@ SELECT
     _call_id
 FROM
     {{ ref('silver__traces') }} A
-    LEFT JOIN {{ ref('silver__prices') }}
+    LEFT JOIN {{ source('ethereum','fact_hourly_token_prices') }}
     ON DATE_TRUNC(
         'hour',
         block_timestamp
