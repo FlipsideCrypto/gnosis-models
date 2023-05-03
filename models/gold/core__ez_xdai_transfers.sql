@@ -12,8 +12,8 @@ SELECT
     tx.from_address AS origin_from_address,
     tx.to_address AS origin_to_address,
     origin_function_signature,
-    A.from_address AS eth_from_address,
-    A.to_address AS eth_to_address,
+    A.from_address AS xdai_from_address,
+    A.to_address AS xdai_to_address,
     A.xdai_value AS amount,
     ROUND(
         A.xdai_value * price,
