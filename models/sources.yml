@@ -39,3 +39,5 @@ sources:
     schema: silver
     tables:
       - name: apis_keys
+      - name: token_prices_priority_hourly
+      - name: asset_metadata_priority
