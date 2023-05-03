@@ -22,13 +22,13 @@ models:
           - not_null
           - dbt_expectations.expect_column_values_to_match_regex:
               regex: 0[xX][0-9a-fA-F]+
-      - name: ETH_FROM_ADDRESS
+      - name: XDAI_FROM_ADDRESS
         description: '{{ doc("gno_transfer_from_address") }}'
         tests:
           - not_null
           - dbt_expectations.expect_column_values_to_match_regex:
               regex: 0[xX][0-9a-fA-F]+
-      - name: ETH_TO_ADDRESS
+      - name: XDAI_TO_ADDRESS
         description: '{{ doc("gno_transfer_to_address") }}'
         tests:
           - not_null
