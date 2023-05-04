@@ -22,12 +22,12 @@ SELECT
     _call_id
 FROM
     {{ ref('silver__traces') }} A
-    LEFT JOIN {{ source('ethereum','fact_hourly_token_prices') }}
+    LEFT JOIN {{ ref('silver__prices') }}
     ON DATE_TRUNC(
         'hour',
         block_timestamp
     ) = HOUR
-    AND token_address = LOWER('0x6B175474E89094C44Da98b954EedeAC495271d0F')
+    AND token_address = LOWER('0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d')
     LEFT JOIN {{ ref('silver__transactions') }}
     tx
     ON A.tx_hash = tx.tx_hash
