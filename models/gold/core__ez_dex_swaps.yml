@@ -5,15 +5,15 @@ models:
 
     columns:
       - name: BLOCK_NUMBER
-        description: '{{ doc("opt_block_number") }}'
+        description: '{{ doc("gno_block_number") }}'
       - name: BLOCK_TIMESTAMP
-        description: '{{ doc("opt_block_timestamp") }}'
+        description: '{{ doc("gno_block_timestamp") }}'
       - name: TX_HASH
-        description: '{{ doc("opt_logs_tx_hash") }}'
+        description: '{{ doc("gno_logs_tx_hash") }}'
       - name: CONTRACT_ADDRESS
-        description: '{{ doc("opt_logs_contract_address") }}'
+        description: '{{ doc("gno_logs_contract_address") }}'
       - name: EVENT_NAME
-        description: '{{ doc("opt_event_name") }}'
+        description: '{{ doc("gno_event_name") }}'
       - name: AMOUNT_IN
         description: '{{ doc("eth_dex_swaps_amount_in") }}'
       - name: AMOUNT_OUT
@@ -37,12 +37,12 @@ models:
       - name: PLATFORM
         description: '{{ doc("eth_dex_platform") }}'
       - name: EVENT_INDEX
-        description: '{{ doc("opt_event_index") }}'
+        description: '{{ doc("gno_event_index") }}'
       - name: _LOG_ID
-        description: '{{ doc("opt_log_id_events") }}'
+        description: '{{ doc("gno_log_id_events") }}'
       - name: ORIGIN_FUNCTION_SIGNATURE
-        description: '{{ doc("opt_tx_origin_sig") }}'
+        description: '{{ doc("gno_tx_origin_sig") }}'
       - name: ORIGIN_FROM_ADDRESS
-        description: '{{ doc("opt_origin_from") }}'
+        description: '{{ doc("gno_origin_from") }}'
       - name: ORIGIN_TO_ADDRESS
-        description: '{{ doc("opt_origin_to") }}'
+        description: '{{ doc("gno_origin_to") }}'

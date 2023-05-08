@@ -1,4 +1,4 @@
-{{ config(
+{# {{ config(
     materialized = 'incremental',
     unique_key = "_log_id",
     cluster_by = ['block_timestamp::DATE']
@@ -223,4 +223,4 @@ SELECT
     _inserted_timestamp,
     'curve' AS platform
 FROM
-    ready_pool_info
+    ready_pool_info #}

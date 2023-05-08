@@ -1,4 +1,4 @@
-{{ config(
+{# {{ config(
   materialized = 'incremental',
   unique_key = "_log_id",
   cluster_by = ['block_timestamp::DATE']
@@ -99,7 +99,6 @@ curve_swaps AS (
     origin_from_address,
     origin_to_address,
     contract_address,
-    pool_name,
     event_name,
     s.tokens_sold AS amount_in_unadj,
     s.tokens_bought AS amount_out_unadj,
@@ -117,6 +116,7 @@ curve_swaps AS (
       c2.symbol,
       s.symbol_out
     ) AS token_symbol_out,
+    pool_name,
     c1.decimals AS decimals_in,
     CASE
       WHEN decimals_in IS NOT NULL THEN s.tokens_sold / pow(
@@ -152,7 +152,7 @@ curve_swaps AS (
 {% if is_incremental() %}
 AND _inserted_timestamp >= (
   SELECT
-    MAX(_inserted_timestamp) :: DATE - 1
+    MAX(_inserted_timestamp) :: DATE
   FROM
     {{ this }}
 )
@@ -168,6 +168,56 @@ balancer_swaps AS (
     origin_to_address,
     contract_address,
     pool_name,
+    event_name,
+    c1.decimals AS decimals_in,
+    c1.symbol AS symbol_in,
+    amount_in_unadj,
+    amount_out_unadj,
+    CASE
+      WHEN decimals_in IS NULL THEN amount_in_unadj
+      ELSE (amount_in_unadj / pow(10, decimals_in))
+    END AS amount_in,
+    c2.decimals AS decimals_out,
+    c2.symbol AS symbol_out,
+    CASE
+      WHEN decimals_out IS NULL THEN amount_out_unadj
+      ELSE (amount_out_unadj / pow(10, decimals_out))
+    END AS amount_out,
+    sender,
+    tx_to,
+    event_index,
+    platform,
+    token_in,
+    token_out,
+    _log_id,
+    _inserted_timestamp
+  FROM
+    {{ ref('silver_dex__balancer_swaps') }}
+    s
+    LEFT JOIN contracts c1
+    ON s.token_in = c1.address
+    LEFT JOIN contracts c2
+    ON s.token_out = c2.address
+
+{% if is_incremental() %}
+WHERE
+  _inserted_timestamp >= (
+    SELECT
+      MAX(_inserted_timestamp) :: DATE
+    FROM
+      {{ this }}
+  )
+{% endif %}
+),
+honeyswap_swaps AS (
+  SELECT
+    block_number,
+    block_timestamp,
+    tx_hash,
+    origin_function_signature,
+    origin_from_address,
+    origin_to_address,
+    contract_address,
     event_name,
     c1.decimals AS decimals_in,
     c1.symbol AS symbol_in,
@@ -189,10 +239,62 @@ balancer_swaps AS (
     platform,
     token_in,
     token_out,
+    CONCAT(LEAST(symbol_in, symbol_out), '-', GREATEST(symbol_in, symbol_out)) AS pool_name,
     _log_id,
     _inserted_timestamp
   FROM
-    {{ ref('silver_dex__balancer_swaps') }}
+    {{ ref('silver_dex__honeyswap_swaps') }}
+    s
+    LEFT JOIN contracts c1
+    ON s.token_in = c1.address
+    LEFT JOIN contracts c2
+    ON s.token_out = c2.address
+
+{% if is_incremental() %}
+WHERE
+  _inserted_timestamp >= (
+    SELECT
+      MAX(_inserted_timestamp) :: DATE - 1
+    FROM
+      {{ this }}
+  )
+{% endif %}
+),
+swapr_swaps AS (
+  SELECT
+    block_number,
+    block_timestamp,
+    tx_hash,
+    origin_function_signature,
+    origin_from_address,
+    origin_to_address,
+    contract_address,
+    event_name,
+    c1.decimals AS decimals_in,
+    c1.symbol AS symbol_in,
+    amount_in_unadj,
+    CASE
+      WHEN decimals_in IS NULL THEN amount_in_unadj
+      ELSE (amount_in_unadj / pow(10, decimals_in))
+    END AS amount_in,
+    c2.decimals AS decimals_out,
+    c2.symbol AS symbol_out,
+    amount_out_unadj,
+    CASE
+      WHEN decimals_out IS NULL THEN amount_out_unadj
+      ELSE (amount_out_unadj / pow(10, decimals_out))
+    END AS amount_out,
+    sender,
+    tx_to,
+    event_index,
+    platform,
+    token_in,
+    token_out,
+    CONCAT(LEAST(symbol_in, symbol_out), '-', GREATEST(symbol_in, symbol_out)) AS pool_name,
+    _log_id,
+    _inserted_timestamp
+  FROM
+    {{ ref('silver_dex__swapr_swaps') }}
     s
     LEFT JOIN contracts c1
     ON s.token_in = c1.address
@@ -298,6 +400,64 @@ all_dex_standard AS (
     _inserted_timestamp
   FROM
     curve_swaps
+    UNION ALL
+  SELECT
+    block_number,
+    block_timestamp,
+    tx_hash,
+    origin_function_signature,
+    origin_from_address,
+    origin_to_address,
+    contract_address,
+    pool_name,
+    event_name,
+    amount_in_unadj,
+    amount_out_unadj,
+    amount_in,
+    amount_out,
+    sender,
+    tx_to,
+    event_index,
+    platform,
+    token_in,
+    token_out,
+    symbol_in,
+    symbol_out,
+    decimals_in,
+    decimals_out,
+    _log_id,
+    _inserted_timestamp
+  FROM
+    honeyswap_swaps
+    UNION ALL
+  SELECT
+    block_number,
+    block_timestamp,
+    tx_hash,
+    origin_function_signature,
+    origin_from_address,
+    origin_to_address,
+    contract_address,
+    pool_name,
+    event_name,
+    amount_in_unadj,
+    amount_out_unadj,
+    amount_in,
+    amount_out,
+    sender,
+    tx_to,
+    event_index,
+    platform,
+    token_in,
+    token_out,
+    symbol_in,
+    symbol_out,
+    decimals_in,
+    decimals_out,
+    _log_id,
+    _inserted_timestamp
+  FROM
+    swapr_swaps
 ),
 FINAL AS (
   SELECT
@@ -388,4 +548,4 @@ SELECT
   _log_id,
   _inserted_timestamp
 FROM
-  FINAL
+  FINAL #}
