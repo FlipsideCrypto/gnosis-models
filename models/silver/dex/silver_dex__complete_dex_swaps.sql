@@ -1,4 +1,4 @@
-{# {{ config(
+{{ config(
   materialized = 'incremental',
   unique_key = "_log_id",
   cluster_by = ['block_timestamp::DATE']
@@ -548,4 +548,4 @@ SELECT
   _log_id,
   _inserted_timestamp
 FROM
-  FINAL #}
+  FINAL

@@ -1,4 +1,4 @@
-{# {{ config(
+{{ config(
     materialized = 'incremental',
     unique_key = "pool_id",
     full_refresh = false
@@ -340,4 +340,4 @@ SELECT
     pool_decimals,
     pool_id,
     _inserted_timestamp
-FROM FINAL #}
+FROM FINAL
