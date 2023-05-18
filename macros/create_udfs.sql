@@ -6,6 +6,12 @@
     {{ create_udf_hex_to_int(
             schema = "public"
         ) }}
+                {{ create_udf_keccak(
+            schema = 'silver'
+        ) }}
+        {{ create_udf_simple_event_names(
+            schema = 'silver'
+        ) }}
 
         {% endset %}
         {% do run_query(sql) %}
