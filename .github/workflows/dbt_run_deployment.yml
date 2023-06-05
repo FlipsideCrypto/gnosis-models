@@ -30,7 +30,7 @@ env:
   PASSWORD: "${{ secrets.PASSWORD }}"
   REGION: "${{ vars.REGION }}"
   DATABASE: "${{ vars.DATABASE }}"
-  WAREHOUSE: "${{ vars.WAREHOUSE }}"
+  WAREHOUSE: "${{ inputs.WAREHOUSE }}"
   SCHEMA: "${{ vars.SCHEMA }}"
 
 concurrency:
@@ -43,5 +43,5 @@ jobs:
       dbt_command: |
          ${{ inputs.dbt_command }}
       environment: workflow_prod
-      warehouse: ${{ vars.WAREHOUSE }}
+      warehouse: ${{ inputs.WAREHOUSE }}
     secrets: inherit 
