@@ -103,7 +103,7 @@ borrow AS (
     origin_from_address AS borrower,
     CONCAT ('0x', SUBSTR(topics [3] :: STRING, 27, 40)) AS borrower2,
     TRY_TO_NUMBER(
-      PUBLIC.udf_hex_to_int(SUBSTR(DATA, 3, len(DATA))) :: INTEGER) AS amount,
+      utils.udf_hex_to_int(SUBSTR(DATA, 3, len(DATA))) :: INTEGER) AS amount,
       CASE
         WHEN borrower = borrower2 THEN 'no'
         ELSE 'yes'
@@ -150,7 +150,7 @@ add_coll_same_txn AS (
     origin_from_address AS borrower,
     CONCAT ('0x', SUBSTR(topics [2] :: STRING, 27, 40)) AS borrower2,
     TRY_TO_NUMBER(
-      PUBLIC.udf_hex_to_int(SUBSTR(DATA, 3, len(DATA))) :: INTEGER) AS amount,
+      utils.udf_hex_to_int(SUBSTR(DATA, 3, len(DATA))) :: INTEGER) AS amount,
       CASE
         WHEN borrower = borrower2 THEN 'no'
         ELSE 'yes'
@@ -197,7 +197,7 @@ repay AS (
     origin_from_address AS borrower,
     CONCAT ('0x', SUBSTR(topics [2] :: STRING, 27, 40)) AS borrower2,
     TRY_TO_NUMBER(
-      PUBLIC.udf_hex_to_int(SUBSTR(DATA, 3, len(DATA))) :: INTEGER) AS amount,
+      utils.udf_hex_to_int(SUBSTR(DATA, 3, len(DATA))) :: INTEGER) AS amount,
       CASE
         WHEN borrower = borrower2 THEN 'no'
         ELSE 'yes'
@@ -244,7 +244,7 @@ remove_coll_same_txn AS (
     origin_from_address AS borrower,
     CONCAT('0x', SUBSTR(topics [3] :: STRING, 27, 40)) AS borrower2,
     TRY_TO_NUMBER(
-      PUBLIC.udf_hex_to_int(SUBSTR(DATA, 3, len(DATA))) :: INTEGER) AS amount,
+      utils.udf_hex_to_int(SUBSTR(DATA, 3, len(DATA))) :: INTEGER) AS amount,
       CASE
         WHEN borrower = borrower2 THEN 'no'
         ELSE 'yes'
@@ -291,7 +291,7 @@ add_coll_in_separate_txn AS (
     origin_from_address AS borrower,
     CONCAT('0x', SUBSTR(topics [2] :: STRING, 27, 40)) AS borrower2,
     TRY_TO_NUMBER(
-      PUBLIC.udf_hex_to_int(SUBSTR(DATA, 3, len(DATA))) :: INTEGER) AS amount,
+      utils.udf_hex_to_int(SUBSTR(DATA, 3, len(DATA))) :: INTEGER) AS amount,
       CASE
         WHEN borrower = borrower2 THEN 'no'
         ELSE 'yes'
@@ -350,7 +350,7 @@ remove_coll_in_separate_txn AS (
     origin_from_address AS borrower,
     CONCAT('0x', SUBSTR(topics [3] :: STRING, 27, 40)) AS borrower2,
     TRY_TO_NUMBER(
-      PUBLIC.udf_hex_to_int(SUBSTR(DATA, 3, len(DATA))) :: INTEGER) AS amount,
+      utils.udf_hex_to_int(SUBSTR(DATA, 3, len(DATA))) :: INTEGER) AS amount,
       CASE
         WHEN borrower = borrower2 THEN 'no'
         ELSE 'yes'

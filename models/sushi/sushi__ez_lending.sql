@@ -67,7 +67,7 @@ lending AS (
     origin_from_address AS lender,
     CONCAT('0x', SUBSTR(topics [2] :: STRING, 27, 40)) AS lender2,
     TRY_TO_NUMBER(
-      PUBLIC.udf_hex_to_int(SUBSTR(DATA, 3, len(DATA))) :: INTEGER) AS amount,
+      utils.udf_hex_to_int(SUBSTR(DATA, 3, len(DATA))) :: INTEGER) AS amount,
       CASE
         WHEN lender = lender2 THEN 'no'
         ELSE 'yes'
@@ -114,7 +114,7 @@ withdraw AS (
     origin_from_address AS lender,
     CONCAT('0x', SUBSTR(topics [3] :: STRING, 27, 40)) AS lender2,
     TRY_TO_NUMBER(
-      PUBLIC.udf_hex_to_int(SUBSTR(DATA, 3, len(DATA))) :: INTEGER) AS amount,
+      utils.udf_hex_to_int(SUBSTR(DATA, 3, len(DATA))) :: INTEGER) AS amount,
       CASE
         WHEN lender = lender2 THEN 'no'
         ELSE 'yes'
