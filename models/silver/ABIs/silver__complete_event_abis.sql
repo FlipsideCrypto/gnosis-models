@@ -133,7 +133,7 @@ apply_udfs AS (
             ) :: STRING
         ) AS abi,
         start_block,
-        utils.udf_simple_event_name(abi) AS simple_event_name,
+        utils.udf_evm_text_signature(abi) AS simple_event_name,
         utils.udf_keccak256(simple_event_name) AS event_signature,
         priority,
         NAME,
