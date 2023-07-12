@@ -29,7 +29,7 @@ tests:
 
 on-run-start:
   - "{{ create_sps() }}"
-  - "{{ fsc_utils.create_udfs() }}"
+  - "{{ create_udfs() }}"
   # - "{{ db_comment() }}"
 
 on-run-end:
