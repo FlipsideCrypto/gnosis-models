@@ -24,22 +24,20 @@ There is more information on how to use dbt docs in the last section of this doc
 **Fact Tables:**
 - [fact_blocks](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.core__fact_blocks)
 - [fact_event_logs](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.core__fact_event_logs)
+- [fact_hourly_token_prices](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.core__fact_hourly_token_prices)
 - [fact_token_transfers](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.core__fact_token_transfers)
 - [fact_traces](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.core__fact_traces)
 - [fact_transactions](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.core__fact_transactions)
 
 **Convenience Tables:**
 - [ez_xdai_transfers](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.core__ez_xdai_transfers)
+- [ez_token_transfers](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.core__ez_token_transfers)
 
 ## **Helpful User-Defined Functions (UDFs)**
 
-UDFs are custom functions built by the Flipside team that can be used in your queries to make your life easier.
+UDFs are custom functions built by the Flipside team that can be used in your queries to make your life easier. 
 
-Helpful UDFs for working with EVM data:
-```sql
--- Convert a hex encoded value to an integer with ethereum.public.udf_hex_to_int(FIELD::string)
-select '0xFC3C88'::string as hex_value, ethereum.public.udf_hex_to_int('0xFC3C88') as int_value
-```
+Please visit [LiveQuery Functions Overview](https://flipsidecrypto.github.io/livequery-models/#!/overview) for a full list of helpful UDFs.
 
 ## **Data Model Overview**
 
