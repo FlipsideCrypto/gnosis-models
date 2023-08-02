@@ -5,7 +5,7 @@
 
 SELECT
     contract_address,
-    'avalanche' AS blockchain,
+    'gnosis' AS blockchain,
     COUNT(*) AS transfers,
     MAX(block_number) AS latest_block
 FROM
