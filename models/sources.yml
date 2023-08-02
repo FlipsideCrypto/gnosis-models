@@ -13,15 +13,15 @@ sources:
     tables:
       - name: address_labels
       - name: ez_hourly_prices
-  - name: ethereum 
+  - name: ethereum
     database: ethereum
-    schema: core 
-    tables: 
+    schema: core
+    tables:
       - name: fact_hourly_token_prices
   - name: streamline_crosschain
     database: streamline
     schema: crosschain
-    tables: 
+    tables:
       - name: node_mapping
   - name: crosschain_silver
     database: crosschain
@@ -35,3 +35,15 @@ sources:
     schema: bronze_public
     tables:
       - name: user_abis
+  - name: bronze_streamline
+    database: streamline
+    schema: |
+      {{ "GNOSIS_DEV" if var("STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES", False) else "GNOSIS" }}
+    tables:
+      - name: receipts
+      - name: blocks
+      - name: transactions
+      - name: debug_traceBlockByNumber
+      - name: decoded_logs
+      - name: confirm_blocks
+      
