@@ -46,4 +46,3 @@ sources:
       - name: debug_traceBlockByNumber
       - name: decoded_logs
       - name: confirm_blocks
-      
