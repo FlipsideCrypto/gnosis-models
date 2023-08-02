@@ -19,17 +19,6 @@
     {%- endif %};
 {% endmacro %}
 
-{% macro create_udf_bulk_get_traces() %}
-    CREATE
-    OR REPLACE EXTERNAL FUNCTION streamline.udf_bulk_get_traces(
-        json variant
-    ) returns text api_integration = {% if target.name == "prod" %}
-        aws_gnosis_api AS 'https://xxx.execute-api.us-east-1.amazonaws.com/prod/udf_bulk_get_traces'
-    {% else %}
-        aws_gnosis_api_dev AS 'https://fp4z9mbqa3.execute-api.us-east-1.amazonaws.com/dev/udf_bulk_get_traces'
-    {%- endif %};
-{% endmacro %}
-
 {% macro create_udf_decode_array_string() %}
     CREATE
     OR REPLACE EXTERNAL FUNCTION streamline.udf_decode(
