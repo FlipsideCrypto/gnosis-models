@@ -147,7 +147,7 @@ new_records AS (
         LEFT OUTER JOIN {{ ref('silver__blocks2') }}
         b
         ON t.block_number = b.block_number
-        LEFT OUTER JOIN {{ ref('silver__receipts2') }}
+        LEFT OUTER JOIN {{ ref('silver__receipts') }}
         r
         ON t.block_number = r.block_number
         AND t.tx_hash = r.tx_hash
@@ -211,7 +211,7 @@ missing_data AS (
         INNER JOIN {{ ref('silver__blocks2') }}
         b
         ON t.block_number = b.block_number
-        INNER JOIN {{ ref('silver__receipts2') }}
+        INNER JOIN {{ ref('silver__receipts') }}
         r
         ON t.tx_hash = r.tx_hash
         AND t.block_number = r.block_number
