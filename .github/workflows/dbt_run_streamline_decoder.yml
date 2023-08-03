@@ -1,11 +1,11 @@
-name: dbt_run_streamline_decoder_history
-run-name: dbt_run_streamline_decoder_history
+name: dbt_run_streamline_decoder
+run-name: dbt_run_streamline_decoder
 
 on:
   workflow_dispatch:
   schedule:
-    # Runs "at 10:10 UTC AM" (see https://crontab.guru)
-    - cron: '10 10 * * *'
+    # Runs “At minute 50, every hour.” (see https://crontab.guru)
+    - cron: '50 * * * *'
     
 env:
   DBT_PROFILES_DIR: ./
@@ -42,4 +42,4 @@ jobs:
           dbt deps
       - name: Run DBT Jobs
         run: |
-          dbt run --threads 8 --vars '{"STREAMLINE_INVOKE_STREAMS":True,"WAIT":120}' -m 1+tag:streamline_decoded_logs_history
+          dbt run -m tag:decoded_logs
