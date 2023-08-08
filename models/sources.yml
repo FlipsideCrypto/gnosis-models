@@ -46,3 +46,13 @@ sources:
       - name: debug_traceBlockByNumber
       - name: decoded_logs
       - name: confirm_blocks
+  - name: gnosis_silver
+    database: gnosis
+    schema: silver
+    tables:
+      - name: verified_abis
+  - name: gnosis_bronze_api
+    database: gnosis
+    schema: bronze_api
+    tables:
+      - name: contract_abis
