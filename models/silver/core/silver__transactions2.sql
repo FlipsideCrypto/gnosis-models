@@ -8,7 +8,6 @@
     tags = ['non_realtime']
 ) }}
 --full-refresh = false --add after backfill
-
 WITH base AS (
 
     SELECT
@@ -89,12 +88,7 @@ base_tx AS (
         A.data :v :: STRING AS v,
         utils.udf_hex_to_int(
             A.data :value :: STRING
-        ) AS xdai_value_precise_raw,
-        utils.udf_decimal_adjust(
-            xdai_value_precise_raw,
-            18
-        ) AS xdai_value_precise,
-        xdai_value_precise :: FLOAT AS VALUE,
+        ) :: FLOAT AS VALUE,
         A._INSERTED_TIMESTAMP,
         A.data
     FROM
@@ -120,8 +114,6 @@ new_records AS (
         t.position,
         t.type,
         t.v,
-        t.xdai_value_precise_raw,
-        t.xdai_value_precise,
         t.value,
         block_timestamp,
         CASE
@@ -134,11 +126,20 @@ new_records AS (
         tx_status,
         cumulative_gas_used,
         effective_gas_price,
-        utils.udf_decimal_adjust(
-            t.gas_price * r.gas_used,
-            9
-        ) AS tx_fee_precise,
-        tx_fee_precise :: FLOAT AS tx_fee,
+        CASE
+            WHEN t.block_number >= 19040000 THEN utils.udf_decimal_adjust(
+                effective_gas_price * r.gas_used,
+                9
+            )
+            ELSE utils.udf_decimal_adjust(
+                gas_price * r.gas_used,
+                9
+            )
+        END AS tx_fee_precise,
+        COALESCE(
+            tx_fee_precise :: FLOAT,
+            0
+        ) AS tx_fee,
         r.type AS tx_type,
         t._inserted_timestamp,
         t.data
@@ -183,8 +184,6 @@ missing_data AS (
         t.position,
         t.type,
         t.v,
-        t.xdai_value_precise_raw,
-        t.xdai_value_precise,
         t.value,
         b.block_timestamp,
         FALSE AS is_pending,
@@ -193,11 +192,20 @@ missing_data AS (
         r.tx_status,
         r.cumulative_gas_used,
         r.effective_gas_price,
-        utils.udf_decimal_adjust(
-            t.gas_price * r.gas_used,
-            9
-        ) AS tx_fee_precise,
-        tx_fee_precise :: FLOAT AS tx_fee,
+        CASE
+            WHEN t.block_number >= 19040000 THEN utils.udf_decimal_adjust(
+                effective_gas_price * r.gas_used,
+                9
+            )
+            ELSE utils.udf_decimal_adjust(
+                gas_price * r.gas_used,
+                9
+            )
+        END AS tx_fee_precise,
+        COALESCE(
+            tx_fee_precise :: FLOAT,
+            0
+        ) AS tx_fee,
         r.type AS tx_type,
         GREATEST(
             t._inserted_timestamp,
@@ -240,8 +248,6 @@ FINAL AS (
         TYPE,
         v,
         VALUE,
-        xdai_value_precise_raw,
-        xdai_value_precise,
         block_timestamp,
         is_pending,
         gas_used,
@@ -279,8 +285,6 @@ SELECT
     TYPE,
     v,
     VALUE,
-    xdai_value_precise_raw,
-    xdai_value_precise,
     block_timestamp,
     is_pending,
     gas_used,
