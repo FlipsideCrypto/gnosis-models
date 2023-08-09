@@ -127,7 +127,8 @@ new_records AS (
         cumulative_gas_used,
         effective_gas_price,
         CASE
-            WHEN t.block_number >= 19040000 THEN utils.udf_decimal_adjust(
+            WHEN t.block_number >= 19040000
+            AND r.type = 2 THEN utils.udf_decimal_adjust(
                 effective_gas_price * r.gas_used,
                 9
             )
@@ -193,7 +194,8 @@ missing_data AS (
         r.cumulative_gas_used,
         r.effective_gas_price,
         CASE
-            WHEN t.block_number >= 19040000 THEN utils.udf_decimal_adjust(
+            WHEN t.block_number >= 19040000
+            AND r.type = 2 THEN utils.udf_decimal_adjust(
                 effective_gas_price * r.gas_used,
                 9
             )
