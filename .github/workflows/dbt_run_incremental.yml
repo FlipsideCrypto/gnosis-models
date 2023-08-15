@@ -41,5 +41,5 @@ jobs:
           dbt deps
       - name: Run DBT Jobs
         run: |
-          dbt run --exclude models/silver/abis/silver__relevant_abi_contracts.sql models/silver/abis models/silver/streamline models/silver/core 
+          dbt run --exclude models/silver/abis/silver__relevant_abi_contracts.sql models/silver/abis models/silver/streamline models/silver/core tag:observability
           dbt run --vars '{"STREAMLINE_INVOKE_STREAMS":True}' -m 1+tag:streamline_decoded_logs_realtime
