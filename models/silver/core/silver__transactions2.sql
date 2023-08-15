@@ -196,7 +196,7 @@ missing_data AS (
         CASE
             WHEN t.block_number >= 19040000
             AND r.type = 2 THEN utils.udf_decimal_adjust(
-                effective_gas_price * r.gas_used,
+                r.effective_gas_price * r.gas_used,
                 9
             )
             ELSE utils.udf_decimal_adjust(
