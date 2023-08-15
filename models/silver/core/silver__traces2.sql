@@ -5,10 +5,9 @@
     unique_key = "block_number",
     cluster_by = "block_timestamp::date, _inserted_timestamp::date",
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION",
-    tags = ['non_realtime']
+    tags = ['non_realtime'],
+    full_refresh = false
 ) }}
-
---    full_refresh = false, add back after backfill
 
 WITH traces_txs AS (
 
@@ -20,27 +19,23 @@ WITH traces_txs AS (
     FROM
 
 {% if is_incremental() %}
-{{ ref('bronze__streamline_FR_traces') }}
+{{ ref('bronze__streamline_traces') }}
 WHERE
-    _partition_by_block_id BETWEEN (
+    _inserted_timestamp >= (
         SELECT
-            ROUND(MAX(block_number), -4)
+            MAX(_inserted_timestamp) _inserted_timestamp
         FROM
-            {{ this }})
-            AND (
-                SELECT
-                    ROUND(MAX(block_number), -4) + 2000000
-                FROM
-                    {{ this }})
-                {% else %}
-                    {{ ref('bronze__streamline_FR_traces') }}
-                WHERE
-                    _partition_by_block_id <= 2500000
-                {% endif %}
+            {{ this }}
+    )
+{% else %}
+    {{ ref('bronze__streamline_FR_traces') }}
+WHERE
+    _partition_by_block_id <= 5000000
+{% endif %}
 
-                qualify(ROW_NUMBER() over (PARTITION BY block_number, tx_position
-                ORDER BY
-                    _inserted_timestamp DESC)) = 1
+qualify(ROW_NUMBER() over (PARTITION BY block_number, tx_position
+ORDER BY
+    _inserted_timestamp DESC)) = 1
 ),
 base_table AS (
     SELECT
@@ -259,15 +254,14 @@ flattened_traces AS (
                 ON f.tx_position = t.position
                 AND f.block_number = t.block_number
 
---add back after backfill
-{# {% if is_incremental() %}
+{% if is_incremental() %}
 AND t._INSERTED_TIMESTAMP >= (
     SELECT
         MAX(_inserted_timestamp) :: DATE - 1
     FROM
         {{ this }}
 )
-{% endif %} #}
+{% endif %}
 )
 
 {% if is_incremental() %},

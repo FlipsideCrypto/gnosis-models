@@ -5,9 +5,9 @@
     unique_key = "block_number",
     cluster_by = "ROUND(block_number, -3)",
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(tx_hash)",
-    tags = ['non_realtime']
+    tags = ['non_realtime'],
+    full_refresh = false
 ) }}
---    full_refresh = false, add back after backfill
 
 WITH base AS (
 

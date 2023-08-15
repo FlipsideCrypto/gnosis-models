@@ -3,19 +3,47 @@
     post_hook = if_data_call_function(
         func = "{{this.schema}}.udf_bulk_json_rpc(object_construct('sql_source', '{{this.identifier}}', 'external_table', 'confirm_blocks', 'sql_limit', {{var('sql_limit','50000')}}, 'producer_batch_size', {{var('producer_batch_size','25000')}}, 'worker_batch_size', {{var('worker_batch_size','12500')}}, 'batch_call_limit', {{var('batch_call_limit','10')}}, 'call_type', 'batch'))",
         target = "{{this.schema}}.{{this.identifier}}"
-    )
+    ),
+    tags = ['streamline_core_realtime']
 ) }}
 
-with tbl AS (
+WITH look_back AS (
+
+    SELECT
+        block_number
+    FROM
+        {{ ref("_max_block_by_hour") }}
+        qualify ROW_NUMBER() over (
+            ORDER BY
+                block_number DESC
+        ) = 6
+),
+tbl AS (
     SELECT
         block_number
     FROM
         {{ ref("streamline__blocks") }}
+    WHERE
+        block_number IS NOT NULL
+        AND block_number <= (
+            SELECT
+                block_number
+            FROM
+                look_back
+        )
     EXCEPT
     SELECT
         block_number
     FROM
         {{ ref("streamline__complete_confirmed_blocks") }}
+    WHERE
+        block_number IS NOT NULL
+        AND block_number <= (
+            SELECT
+                block_number
+            FROM
+                look_back
+        )
 )
 SELECT
     PARSE_JSON(
