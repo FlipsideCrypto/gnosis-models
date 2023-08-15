@@ -200,7 +200,7 @@ missing_data AS (
                 9
             )
             ELSE utils.udf_decimal_adjust(
-                gas_price * r.gas_used,
+                t.gas_price * r.gas_used,
                 9
             )
         END AS tx_fee_precise,
