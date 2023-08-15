@@ -4,9 +4,9 @@
     incremental_strategy = 'delete+insert',
     unique_key = "block_number",
     cluster_by = "round(block_number,-3)",
-    tags = ['non_realtime']
+    tags = ['non_realtime'],
+    full_refresh = false
 ) }}
---full_refresh = false --add after backfill
 
 WITH base AS (
 

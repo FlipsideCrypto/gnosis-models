@@ -1,12 +1,12 @@
-name: dbt_run_temp_backfill
-run-name: dbt_run_temp_backfill
+name: dbt_run_full_observability
+run-name: dbt_run_full_observability
 
 on:
   workflow_dispatch:
   schedule:
-    # Runs "every 2 hours at minute 20" (see https://crontab.guru)
-    - cron: '20 */2 * * *'
-
+    # Runs “At 18:00 on day-of-month 1.” (see https://crontab.guru)
+    - cron: '0 18 1 * *'
+    
 env:
   DBT_PROFILES_DIR: ./
 
@@ -26,7 +26,7 @@ jobs:
   run_dbt_jobs:
     runs-on: ubuntu-latest
     environment: 
-      name: workflow_prod_backfill
+      name: workflow_prod_2xl
 
     steps:
       - uses: actions/checkout@v3
@@ -42,4 +42,7 @@ jobs:
           dbt deps
       - name: Run DBT Jobs
         run: |
-          dbt run -m models/silver/core
+          dbt run --threads 2 --vars '{"OBSERV_FULL_TEST":True}' -m tag:observability
+  
+
+
