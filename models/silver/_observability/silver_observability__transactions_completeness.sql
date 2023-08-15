@@ -1,9 +1,10 @@
 {{ config(
     materialized = 'incremental',
     unique_key = 'test_timestamp',
-    full_refresh = false,
     tags = ['observability']
 ) }}
+
+--    full_refresh = false, add back after blocks replayed
 
 WITH summary_stats AS (
 
