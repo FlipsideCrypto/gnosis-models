@@ -11,7 +11,7 @@ WITH base AS (
         ) AS block_hour,
         MAX(block_number) block_number
     FROM
-        {{ ref("silver__blocks") }}
+        {{ ref("silver__blocks2") }}
     WHERE
         block_timestamp > DATEADD(
             'day',

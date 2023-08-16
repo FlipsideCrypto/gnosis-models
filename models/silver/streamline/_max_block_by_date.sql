@@ -9,7 +9,7 @@ WITH base AS (
         block_timestamp :: DATE AS block_date,
         MAX(block_number) block_number
     FROM
-        {{ ref("silver__blocks") }}
+        {{ ref("silver__blocks2") }}
     GROUP BY
         block_timestamp :: DATE
 )
