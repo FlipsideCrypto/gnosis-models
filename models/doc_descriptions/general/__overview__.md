@@ -36,7 +36,7 @@ There is more information on how to use dbt docs in the last section of this doc
 - [ez_decoded_event_logs](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.core__ez_decoded_event_logs)
 
 
-**Convenience Tables:**
+### NFT Tables (gnosis.nft) ###
 - [ez_nft_transfers](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.nft__ez_nft_transfers)
 
 ## **Helpful User-Defined Functions (UDFs)**
