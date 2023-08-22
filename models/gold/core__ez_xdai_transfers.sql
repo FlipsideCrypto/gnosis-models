@@ -22,7 +22,7 @@ SELECT
     _call_id
 FROM
     {{ ref('silver__traces') }} A
-    LEFT JOIN {{ ref('silver__prices') }}
+    LEFT JOIN {{ ref('silver__hourly_prices_all_providers') }}
     ON DATE_TRUNC(
         'hour',
         block_timestamp
