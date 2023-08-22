@@ -381,7 +381,17 @@ SELECT
     DATA,
     is_pending,
     _call_id,
-    _inserted_timestamp
+    _inserted_timestamp,
+    IFNULL(
+        utils.udf_hex_to_int(
+            DATA :value :: STRING
+        ),
+        '0'
+    ) AS xdai_value_precise_raw,
+    utils.udf_decimal_adjust(
+        xdai_value_precise_raw,
+        18
+    ) AS xdai_value_precise
 FROM
     FINAL qualify(ROW_NUMBER() over(PARTITION BY block_number, tx_position, trace_index
 ORDER BY
