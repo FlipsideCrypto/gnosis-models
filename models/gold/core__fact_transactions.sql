@@ -14,14 +14,19 @@ SELECT
     origin_function_signature,
     from_address,
     to_address,
-    xdai_value,
+    VALUE AS xdai_value,
     tx_fee,
     gas_price,
-    gas_limit,
+    effective_gas_price,
+    gas AS gas_limit,
     gas_used,
-    cumulative_Gas_Used,
+    cumulative_gas_used,
+    max_fee_per_gas,
+    max_priority_fee_per_gas,
     input_data,
-    status,
-    tx_json
+    tx_status AS status,
+    r,
+    s,
+    v
 FROM
     {{ ref('silver__transactions') }}

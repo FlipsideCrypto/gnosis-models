@@ -249,7 +249,7 @@ flattened_traces AS (
                 f._inserted_timestamp
             FROM
                 final_traces f
-                LEFT OUTER JOIN {{ ref('silver__transactions2') }}
+                LEFT OUTER JOIN {{ ref('silver__transactions') }}
                 t
                 ON f.tx_position = t.position
                 AND f.block_number = t.block_number
@@ -295,7 +295,7 @@ missing_data AS (
     FROM
         {{ this }}
         t
-        INNER JOIN {{ ref('silver__transactions2') }}
+        INNER JOIN {{ ref('silver__transactions') }}
         txs
         ON t.tx_position = txs.position
         AND t.block_number = txs.block_number
@@ -381,17 +381,7 @@ SELECT
     DATA,
     is_pending,
     _call_id,
-    _inserted_timestamp,
-    IFNULL(
-        utils.udf_hex_to_int(
-            DATA :value :: STRING
-        ),
-        '0'
-    ) AS xdai_value_precise_raw,
-    utils.udf_decimal_adjust(
-        xdai_value_precise_raw,
-        18
-    ) AS xdai_value_precise
+    _inserted_timestamp
 FROM
     FINAL qualify(ROW_NUMBER() over(PARTITION BY block_number, tx_position, trace_index
 ORDER BY
