@@ -35,6 +35,11 @@ There is more information on how to use dbt docs in the last section of this doc
 - [ez_token_transfers](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.core__ez_token_transfers)
 - [ez_decoded_event_logs](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.core__ez_decoded_event_logs)
 
+### Price Tables (gnosis.price)
+- [fact_hourly_token_prices](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.price__fact_hourly_token_prices)
+- [ez_hourly_token_prices](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.price__ez_hourly_token_prices)
+- [dim_asset_metadata](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.price__dim_asset_metadata)
+- [ez_asset_metadata](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.price__ez_asset_metadata)
 
 ### NFT Tables (gnosis.nft) ###
 - [ez_nft_transfers](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.nft__ez_nft_transfers)
