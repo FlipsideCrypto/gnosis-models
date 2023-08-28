@@ -5,7 +5,7 @@
     meta={
     'database_tags':{
         'table': {
-            'PROTOCOL': 'CURVE, FRAXSWAP, KYBERSWAP, PANGOLIN, PLATYPUS, SUSHISWAP, TRADER JOE, UNISWAP',
+            'PROTOCOL': 'CURVE, BALANCER, SUSHI, HONEYSWAP, SWAPR',
             'PURPOSE': 'DEX, LIQUIDITY, POOLS, LP, SWAPS',
             }
         }
