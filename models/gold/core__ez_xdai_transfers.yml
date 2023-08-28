@@ -8,47 +8,29 @@ models:
         description: '{{ doc("gno_block_number") }}'
       - name: BLOCK_TIMESTAMP
         description: '{{ doc("gno_block_timestamp") }}'
-        tests:
-          - not_null
-          - dbt_expectations.expect_row_values_to_have_recent_data:
-              datepart: day
-              interval: 1
-          - dbt_expectations.expect_column_values_to_be_in_type_list:
-              column_type_list:
-                - TIMESTAMP_NTZ   
       - name: TX_HASH
         description: '{{ doc("gno_transfer_tx_hash") }}'
-        tests:
-          - not_null
-          - dbt_expectations.expect_column_values_to_match_regex:
-              regex: 0[xX][0-9a-fA-F]+
       - name: XDAI_FROM_ADDRESS
         description: '{{ doc("gno_transfer_from_address") }}'
-        tests:
-          - not_null
-          - dbt_expectations.expect_column_values_to_match_regex:
-              regex: 0[xX][0-9a-fA-F]+
       - name: XDAI_TO_ADDRESS
         description: '{{ doc("gno_transfer_to_address") }}'
-        tests:
-          - not_null
-          - dbt_expectations.expect_column_values_to_match_regex:
-              regex: 0[xX][0-9a-fA-F]+
       - name: AMOUNT
         description: '{{ doc("gno_xdai_amount") }}'
-        tests:
-          - not_null
-          - dbt_expectations.expect_column_values_to_be_in_type_list:
-              column_type_list:
-                - NUMBER    
-                - FLOAT  
+      - name: TOKEN_PRICE
+        description: '{{ doc("gno_transfer_token_price") }}'
       - name: AMOUNT_USD
         description: '{{ doc("gno_xdai_amount_usd") }}' 
+      - name: HAS_PRICE
+        description: '{{ doc("gno_transfer_has_price") }}' 
       - name: ORIGIN_FUNCTION_SIGNATURE
-        description: '{{ doc("gno_tx_origin_sig") }}'
+        description: '{{ doc("gno_origin_sig") }}'
       - name: ORIGIN_FROM_ADDRESS
-        description: '{{ doc("gno_eth_origin_from") }}'
+        description: '{{ doc("gno_origin_from") }}'
       - name: ORIGIN_TO_ADDRESS
-        description: '{{ doc("gno_eth_origin_to") }}'
+        description: '{{ doc("gno_origin_to") }}'
       - name: IDENTIFIER
         description: '{{ doc("gno_traces_identifier") }}'
+      - name: AMOUNT_PRECISE_RAW
+        description: '{{ doc("precise_amount_unadjusted") }}'
+      - name: AMOUNT_PRECISE
+        description: '{{ doc("precise_amount_adjusted") }}'

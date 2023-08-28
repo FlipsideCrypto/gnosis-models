@@ -6,4 +6,4 @@
 SELECT
     *
 FROM
-    {{ ref('silver__blocks') }}
+    {{ ref('core__ez_xdai_transfers') }}

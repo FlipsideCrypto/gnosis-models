@@ -7,7 +7,7 @@ WITH lookback AS (
     SELECT
         MAX(block_number) AS block_number
     FROM
-        {{ ref("silver__blocks2") }}
+        {{ ref("silver__blocks") }}
     WHERE
         block_timestamp :: DATE = CURRENT_DATE() - 3
 )
@@ -16,7 +16,7 @@ SELECT
 FROM
     {{ ref("silver__confirmed_blocks") }}
     cb
-    LEFT JOIN {{ ref("silver__transactions2") }}
+    LEFT JOIN {{ ref("silver__transactions") }}
     txs USING (
         block_number,
         block_hash,

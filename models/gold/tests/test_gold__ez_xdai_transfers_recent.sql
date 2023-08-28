@@ -17,7 +17,7 @@ WITH last_3_days AS (
 SELECT
     *
 FROM
-    {{ ref('silver__traces') }}
+    {{ ref('core__ez_xdai_transfers') }}
 WHERE
     block_number >= (
         SELECT

@@ -18,6 +18,8 @@ models:
         description: '{{ doc("gno_transfer_to_address") }}'
       - name: RAW_AMOUNT
         description: '{{ doc("gno_transfer_raw_amount") }}'
+      - name: RAW_AMOUNT_PRECISE
+        description: '{{ doc("precise_amount_unadjusted") }}'
       - name: DECIMALS
         description: 'The number of decimal places this contract needs adjusted where token values exist.'
       - name: SYMBOL

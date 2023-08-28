@@ -1,18 +1,20 @@
 version: 2
 models:
-  - name: silver__traces
+  - name: test_gold__ez_xdai_transfers_recent
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - _CALL_ID
+            - BLOCK_NUMBER
+            - TX_POSITION
+            - TRACE_INDEX
     columns:
       - name: BLOCK_NUMBER
         tests:
-          - not_null  
+          - not_null    
           - dbt_expectations.expect_column_values_to_be_in_type_list:
               column_type_list:
                 - NUMBER    
-                - FLOAT    
+                - FLOAT      
       - name: BLOCK_TIMESTAMP
         tests:
           - not_null
@@ -22,31 +24,41 @@ models:
           - dbt_expectations.expect_column_values_to_be_in_type_list:
               column_type_list:
                 - TIMESTAMP_NTZ
+                - TIMESTAMP_LTZ    
       - name: TX_HASH
         tests:
           - not_null
           - dbt_expectations.expect_column_values_to_match_regex:
               regex: 0[xX][0-9a-fA-F]+
-      - name: FROM_ADDRESS
-        tests:
-          - not_null:
-              where: TYPE NOT IN ('SELFDESTRUCT', 'SUICIDE')
-          - dbt_expectations.expect_column_values_to_match_regex:
-              regex: 0[xX][0-9a-fA-F]+
-      - name: TO_ADDRESS
-        tests:
-          - dbt_expectations.expect_column_values_to_match_regex:
-              regex: 0[xX][0-9a-fA-F]+
-              where: TO_ADDRESS IS NOT NULL
-      - name: IDENTIFIER
+      - name: XDAI_FROM_ADDRESS
         tests:
           - not_null
-      - name: XDAI_VALUE
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: 0[xX][0-9a-fA-F]+
+      - name: XDAI_TO_ADDRESS
         tests:
           - not_null
-      - name: GAS
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: 0[xX][0-9a-fA-F]+
+      - name: AMOUNT
         tests:
-          - not_null:
-              where: TYPE NOT IN ('SELFDESTRUCT', 'SUICIDE')
-
-
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - NUMBER    
+                - FLOAT
+      - name: _CALL_ID
+        tests:
+          - not_null    
+      - name: ORIGIN_FUNCTION_SIGNATURE
+        tests:
+          - not_null
+      - name: ORIGIN_FROM_ADDRESS
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: 0[xX][0-9a-fA-F]+
+      - name: ORIGIN_TO_ADDRESS
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: 0[xX][0-9a-fA-F]+
