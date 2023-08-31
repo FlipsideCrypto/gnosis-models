@@ -102,7 +102,7 @@ SELECT
     trace_index
 FROM
     xdai_base A
-    LEFT JOIN {{ ref('silver__prices') }}
+    LEFT JOIN {{ ref('price__ez_hourly_token_prices') }}
     ON DATE_TRUNC(
         'hour',
         A.block_timestamp
