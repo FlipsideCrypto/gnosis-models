@@ -1,10 +1,9 @@
 {{ config(
     materialized = 'incremental',
     unique_key = 'test_timestamp',
-    tags = ['observability']
+    tags = ['observability'],
+    full_refresh = false
 ) }}
-
---    full_refresh = false, add back after blocks replayed
 
 WITH summary_stats AS (
 
@@ -61,10 +60,7 @@ block_range AS (
     SELECT
         _id AS block_number
     FROM
-        {{ source(
-            'crosschain_silver',
-            'number_sequence'
-        ) }}
+        {{ ref('silver__number_sequence') }}
     WHERE
         _id BETWEEN (
             SELECT
