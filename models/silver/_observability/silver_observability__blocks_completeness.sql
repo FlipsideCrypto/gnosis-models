@@ -4,7 +4,6 @@
     tags = ['observability']
 ) }}
 --    full_refresh = false, add back after blocks replayed
-
 WITH summary_stats AS (
 
     SELECT
@@ -60,10 +59,7 @@ block_range AS (
     SELECT
         _id AS block_number
     FROM
-        {{ source(
-            'crosschain_silver',
-            'number_sequence'
-        ) }}
+        {{ ref('silver__number_sequence') }}
     WHERE
         _id BETWEEN (
             SELECT
@@ -105,10 +101,7 @@ block_gen AS (
     SELECT
         _id AS block_number
     FROM
-        {{ source(
-            'crosschain_silver',
-            'number_sequence'
-        ) }}
+        {{ ref('silver__number_sequence') }}
     WHERE
         _id BETWEEN (
             SELECT
