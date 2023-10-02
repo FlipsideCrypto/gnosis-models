@@ -204,9 +204,9 @@ missing_data AS (
                 t.gas_price * r.gas_used,
                 9
             )
-        END AS tx_fee_precise,
+        END AS tx_fee_precise_heal,
         COALESCE(
-            tx_fee_precise :: FLOAT,
+            tx_fee_precise_heal :: FLOAT,
             0
         ) AS tx_fee,
         r.type AS tx_type,
@@ -296,7 +296,7 @@ SELECT
     cumulative_gas_used,
     effective_gas_price,
     tx_fee,
-    tx_fee_precise,
+    tx_fee_precise_heal AS tx_fee_precise,
     tx_type,
     _inserted_timestamp,
     DATA
