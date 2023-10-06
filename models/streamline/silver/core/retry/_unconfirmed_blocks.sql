@@ -15,10 +15,16 @@ FROM
     {{ ref("silver__confirmed_blocks") }}
     cb
     LEFT JOIN {{ ref("silver__transactions") }}
-    txs USING (
-        block_number,
-        block_hash,
-        tx_hash
+    txs
+    ON cb.block_number = txs.block_number
+    AND cb.block_hash = txs.block_hash
+    AND cb.tx_hash = txs.tx_hash
+    AND txs._inserted_timestamp >= DATEADD('hour', -84, SYSDATE())
+    AND txs.block_number >= (
+        SELECT
+            block_number
+        FROM
+            lookback
     )
 WHERE
     txs.tx_hash IS NULL
@@ -29,4 +35,3 @@ WHERE
             lookback
     )
     AND cb._inserted_timestamp >= DATEADD('hour', -84, SYSDATE())
-    AND txs._inserted_timestamp >= DATEADD('hour', -84, SYSDATE())
