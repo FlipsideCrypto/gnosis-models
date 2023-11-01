@@ -60,3 +60,8 @@ sources:
     schema: bronze_api
     tables:
       - name: contract_abis
+  - name: github_actions
+    database: gnosis
+    schema: github_actions
+    tables:
+      - name: workflows
