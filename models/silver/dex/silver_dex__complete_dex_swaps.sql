@@ -22,7 +22,7 @@ prices AS (
     token_address,
     price
   FROM
-    {{ ref('core__fact_hourly_token_prices') }}
+    {{ ref('price__ez_hourly_token_prices') }}
   WHERE
     token_address IN (
       SELECT
@@ -557,5 +557,6 @@ SELECT
   f._inserted_timestamp
 FROM
   FINAL f
-LEFT JOIN {{ ref('silver_dex__complete_dex_liquidity_pools') }} p
+  LEFT JOIN {{ ref('silver_dex__complete_dex_liquidity_pools') }}
+  p
   ON f.contract_address = p.pool_address
