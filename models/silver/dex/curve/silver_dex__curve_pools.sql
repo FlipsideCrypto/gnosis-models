@@ -4,7 +4,9 @@
     unique_key = 'block_number',
     full_refresh = false,
     tags = ['curated']
-) }}WITH contract_deployments AS (
+) }}
+
+WITH contract_deployments AS (
 
 SELECT
     tx_hash,
