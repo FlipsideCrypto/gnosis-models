@@ -10,15 +10,15 @@ SELECT
     block_timestamp,
     from_address,
     to_address,
-    xdai_value,
+    xdai_value AS VALUE,
     IFNULL(
         xdai_value_precise_raw,
         '0'
-    ) AS xdai_value_precise_raw,
+    ) AS value_precise_raw,
     IFNULL(
         xdai_value_precise,
         '0'
-    ) AS xdai_value_precise,
+    ) AS value_precise,
     gas,
     gas_used,
     input,
@@ -30,7 +30,24 @@ SELECT
     sub_traces,
     trace_status,
     error_reason,
-    trace_index
+    trace_index,
+    COALESCE (
+        traces_id,
+        {{ dbt_utils.generate_surrogate_key(
+            ['tx_hash', 'trace_index']
+        ) }}
+    ) AS fact_traces_id,
+    COALESCE(
+        inserted_timestamp,
+        '2000-01-01'
+    ) AS inserted_timestamp,
+    COALESCE(
+        modified_timestamp,
+        '2000-01-01'
+    ) AS modified_timestamp,
+    xdai_value,
+    xdai_value_precise_raw,
+    xdai_value_precise
 FROM
     (
         SELECT
