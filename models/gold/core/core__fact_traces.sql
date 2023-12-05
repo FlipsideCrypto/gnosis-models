@@ -88,7 +88,10 @@ FROM
                     '0*$',
                     ''
                 )
-            ) AS xdai_value_precise
+            ) AS xdai_value_precise,
+            traces_id,
+            inserted_timestamp,
+            modified_timestamp
         FROM
             {{ ref('silver__traces') }}
     )

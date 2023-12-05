@@ -21,9 +21,9 @@ models:
       - name: PROJECT_NAME
         description: '{{ doc("nft_project_name") }}'
       - name: NFT_FROM_ADDRESS
-        description: '{{ doc("nft_nft_from_address") }}'
+        description: '{{ doc("nft_from_address") }}'
       - name: NFT_TO_ADDRESS
-        description: '{{ doc("nft_nft_to_address") }}'
+        description: '{{ doc("nft_to_address") }}'
       - name: TOKENID
         description: '{{ doc("nft_tokenid") }}'
       - name: ERC1155_VALUE

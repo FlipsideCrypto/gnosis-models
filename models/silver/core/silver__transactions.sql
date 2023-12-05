@@ -5,8 +5,7 @@
     unique_key = "block_number",
     cluster_by = "block_timestamp::date, _inserted_timestamp::date",
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION",
-    tags = ['non_realtime'],
-    full_refresh = false
+    tags = ['non_realtime']
 ) }}
 
 WITH base AS (
@@ -329,7 +328,6 @@ FROM
 )
 SELECT
     *,
-    DATA,
     {{ dbt_utils.generate_surrogate_key(
         ['tx_hash']
     ) }} AS transactions_id,
