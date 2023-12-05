@@ -5,8 +5,7 @@
     unique_key = "block_number",
     cluster_by = "block_timestamp::date, _inserted_timestamp::date",
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION",
-    tags = ['non_realtime'],
-    full_refresh = false
+    tags = ['non_realtime']
 ) }}
 
 WITH base AS (
@@ -89,7 +88,12 @@ base_tx AS (
         A.data :v :: STRING AS v,
         utils.udf_hex_to_int(
             A.data :value :: STRING
-        ) :: FLOAT AS VALUE,
+        ) AS value_precise_raw,
+        utils.udf_decimal_adjust(
+            value_precise_raw,
+            18
+        ) AS value_precise,
+        value_precise :: FLOAT AS VALUE,
         A._INSERTED_TIMESTAMP,
         A.data
     FROM
@@ -115,6 +119,8 @@ new_records AS (
         t.position,
         t.type,
         t.v,
+        t.value_precise_raw,
+        t.value_precise,
         t.value,
         block_timestamp,
         CASE
@@ -126,16 +132,21 @@ new_records AS (
         tx_success,
         tx_status,
         cumulative_gas_used,
-        effective_gas_price,
+        utils.udf_decimal_adjust(
+            r.effective_gas_price,
+            9
+        ) AS effective_gas_price,
         CASE
             WHEN t.block_number >= 19040000
             AND r.type = 2 THEN utils.udf_decimal_adjust(
-                effective_gas_price * r.gas_used,
-                9
+                r.effective_gas_price * r.gas_used,
+                18
             )
             ELSE utils.udf_decimal_adjust(
-                gas_price * r.gas_used,
-                9
+                utils.udf_hex_to_int(
+                    t.data :gasPrice :: STRING
+                ) :: bigint * r.gas_used,
+                18
             )
         END AS tx_fee_precise,
         COALESCE(
@@ -186,6 +197,8 @@ missing_data AS (
         t.position,
         t.type,
         t.v,
+        t.value_precise_raw,
+        t.value_precise,
         t.value,
         b.block_timestamp,
         FALSE AS is_pending,
@@ -193,16 +206,21 @@ missing_data AS (
         r.tx_success,
         r.tx_status,
         r.cumulative_gas_used,
-        r.effective_gas_price,
+        utils.udf_decimal_adjust(
+            r.effective_gas_price,
+            9
+        ) AS effective_gas_price,
         CASE
             WHEN t.block_number >= 19040000
             AND r.type = 2 THEN utils.udf_decimal_adjust(
                 r.effective_gas_price * r.gas_used,
-                9
+                18
             )
             ELSE utils.udf_decimal_adjust(
-                t.gas_price * r.gas_used,
-                9
+                utils.udf_hex_to_int(
+                    t.data :gasPrice :: STRING
+                ) :: bigint * r.gas_used,
+                18
             )
         END AS tx_fee_precise_heal,
         COALESCE(
@@ -250,6 +268,8 @@ FINAL AS (
         POSITION,
         TYPE,
         v,
+        value_precise_raw,
+        value_precise,
         VALUE,
         block_timestamp,
         is_pending,
@@ -287,6 +307,8 @@ SELECT
     POSITION,
     TYPE,
     v,
+    value_precise_raw,
+    value_precise,
     VALUE,
     block_timestamp,
     is_pending,
@@ -305,7 +327,13 @@ FROM
 {% endif %}
 )
 SELECT
-    *
+    *,
+    {{ dbt_utils.generate_surrogate_key(
+        ['tx_hash']
+    ) }} AS transactions_id,
+    SYSDATE() AS inserted_timestamp,
+    SYSDATE() AS modified_timestamp,
+    '{{ invocation_id }}' AS _invocation_id
 FROM
     FINAL
 WHERE
