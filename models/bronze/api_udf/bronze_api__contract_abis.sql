@@ -5,19 +5,8 @@
     tags = ['non_realtime']
 ) }}
 
-WITH api_keys AS (
+WITH base AS (
 
-    SELECT
-        api_key
-    FROM
-        {{ source(
-            'crosschain_silver',
-            'apis_keys'
-        ) }}
-    WHERE
-        api_name = 'gnosisscan'
-),
-base AS (
     SELECT
         contract_address
     FROM
@@ -51,16 +40,13 @@ row_nos AS (
         ROW_NUMBER() over (
             ORDER BY
                 contract_address
-        ) AS row_no,
-        api_key
+        ) AS row_no
     FROM
         all_contracts
-        JOIN api_keys
-        ON 1 = 1
 ),
 batched AS ({% for item in range(101) %}
 SELECT
-    rn.contract_address, ethereum.streamline.udf_api('GET', CONCAT('https://api.gnosisscan.io/api?module=contract&action=getabi&address=', contract_address, '&apikey=', api_key),{ 'User-Agent': 'FlipsideStreamline' },{}) AS abi_data, SYSDATE() AS _inserted_timestamp
+    rn.contract_address, live.udf_api('GET', CONCAT('https://api.gnosisscan.io/api?module=contract&action=getabi&address=', contract_address, '&apikey={gnosis_key}'),{ 'User-Agent': 'FlipsideStreamline' },{}, 'EXPLORER') AS abi_data, SYSDATE() AS _inserted_timestamp
 FROM
     row_nos rn
 WHERE
