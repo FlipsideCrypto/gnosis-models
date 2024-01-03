@@ -38,6 +38,7 @@ There is more information on how to use dbt docs in the last section of this doc
 
 ### DeFi Tables (gnosis.defi) ###
 - [ez_dex_swaps](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.defi__ez_dex_swaps)
+- [ez_bridge_activity](https://flipsidecrypto.github.io/arbitrum-models/#!/model/model.gnosis_models.defi__ez_bridge_activity)
 - [dim_dex_liquidity_pools](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.defi__dim_dex_liquidity_pools)
 
 ### Price Tables (gnosis.price)
