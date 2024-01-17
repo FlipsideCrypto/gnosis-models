@@ -31,7 +31,7 @@ WITH celer_cbridge AS (
     FROM
         {{ ref('silver_bridge__celer_cbridge_send') }}
 
-{% if is_incremental() %}
+{% if is_incremental() and 'celer_cbridge' not in var('HEAL_CURATED_MODEL') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
@@ -66,7 +66,7 @@ hop AS (
     FROM
         {{ ref('silver_bridge__hop_transfersent') }}
 
-{% if is_incremental() %}
+{% if is_incremental() and 'hop' not in var('HEAL_CURATED_MODEL') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
@@ -101,7 +101,7 @@ meson AS (
     FROM
         {{ ref('silver_bridge__meson_transfers') }}
 
-{% if is_incremental() %}
+{% if is_incremental() and 'meson' not in var('HEAL_CURATED_MODEL') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
