@@ -50,6 +50,9 @@ There is more information on how to use dbt docs in the last section of this doc
 ### NFT Tables (gnosis.nft) ###
 - [ez_nft_transfers](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.nft__ez_nft_transfers)
 
+### Stats Tables (ethereum.stats)
+- [ez_core_metrics_hourly](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.stats__ez_core_metrics_hourly)
+
 ## **Helpful User-Defined Functions (UDFs)**
 
 UDFs are custom functions built by the Flipside team that can be used in your queries to make your life easier. 
