@@ -26,18 +26,16 @@ models:
         tests:
           - not_null 
       - name: COLLATERAL_SPARK_TOKEN
-      - name: LIQUIDATED_AMOUNT
-        tests: 
+      - name: AMOUNT_UNADJ
+        tests:
+          - not_null
+      - name: AMOUNT
+        tests:
+          - not_null
           - dbt_expectations.expect_column_values_to_be_in_type_list:
               column_type_list:
                 - decimal
-                - float 
-      - name: LIQUIDATED_AMOUNT_USD
-        tests: 
-          - dbt_expectations.expect_column_values_to_be_in_type_list:
-              column_type_list:
-                - decimal
-                - float 
+                - float    
       - name: DEBT_ASSET
         tests:
           - not_null 

@@ -10,7 +10,7 @@ WITH
 atoken_meta AS (
     SELECT
         atoken_address,
-        RealT_version_pool,
+        version_pool,
         atoken_symbol,
         atoken_name,
         atoken_decimals,
@@ -73,7 +73,7 @@ AND _inserted_timestamp >= (
         {{ this }}
 )
 {% endif %}
-AND contract_address IN (SELECT distinct(RealT_version_pool) from atoken_meta)
+AND contract_address IN (SELECT distinct(version_pool) from atoken_meta)
 AND tx_status = 'SUCCESS' --excludes failed txs
 )
 SELECT

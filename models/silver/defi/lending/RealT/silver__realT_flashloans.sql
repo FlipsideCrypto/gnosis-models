@@ -10,7 +10,7 @@ WITH
 atoken_meta AS (
     SELECT
         atoken_address,
-        RealT_version_pool,
+        version_pool,
         atoken_symbol,
         atoken_name,
         atoken_decimals,
@@ -39,15 +39,15 @@ flashloan AS (
         regexp_substr_all(SUBSTR(DATA, 3, len(DATA)), '.{64}') AS segmented_data,
         CONCAT('0x', SUBSTR(topics [1] :: STRING, 27, 40)) AS target_address,
         origin_to_address AS initiator_address,
-        CONCAT('0x', SUBSTR(topics [2] :: STRING, 27, 40)) AS RealT_market,
+        CONCAT('0x', SUBSTR(topics [3] :: STRING, 27, 40)) AS RealT_market,
         utils.udf_hex_to_int(
-            segmented_data [1] :: STRING
+            segmented_data [0] :: STRING
         ) :: INTEGER AS flashloan_quantity,
         utils.udf_hex_to_int(
-            segmented_data [3] :: STRING
+            segmented_data [1] :: STRING
         ) :: INTEGER AS premium_quantity,
         utils.udf_hex_to_int(
-            topics [3] :: STRING
+            topics [2] :: STRING
         ) :: INTEGER AS refferalCode,
         COALESCE(
             origin_to_address,
@@ -59,11 +59,7 @@ flashloan AS (
     FROM
         {{ ref('silver__logs') }}
     WHERE
-        topics [0] :: STRING IN (
-            '0xc6a898309e823ee50bac64e45ca8adba6690e99e7841c45d754e2a38e9019d9b',
-            '0x1e77446728e5558aa1b7e81e0cdab9cc1b075ba893b740600c76a315c2caa553',
-            '0xb3d084820fb1a9decffb176436bd02558d15fac9b0ddfed8c465bc7359d7dce0'
-        )
+        topics [0] :: STRING = '0x631042c832b07452973831137f2d73e395028b44b250dedc5abb0ee766e168ac'
 
 {% if is_incremental() %}
 AND _inserted_timestamp >= (
@@ -75,7 +71,7 @@ AND _inserted_timestamp >= (
         {{ this }}
 )
 {% endif %}
-AND contract_address IN (SELECT distinct(RealT_version_pool) from atoken_meta)
+AND contract_address IN (SELECT distinct(version_pool) from atoken_meta)
 AND tx_status = 'SUCCESS' --excludes failed txs
 )
 SELECT

@@ -39,7 +39,7 @@ agave_token_pull AS (
     WHERE
         topics [0] = '0x3a0ca721fc364424566385a1aa271ed508cc2c0949c2272575fb3013a163a45f'
         AND (
-            a_token_name LIKE '%agave%'
+            a_token_name LIKE '%Agave%'
             OR c2.token_symbol = 'GHO'
         )
 
