@@ -25,7 +25,7 @@ aave AS (
         amount,
         depositor_address,
         'Aave V3' AS platform,
-        'polygon' AS blockchain,
+        'gnosis' AS blockchain,
         _LOG_ID,
         _INSERTED_TIMESTAMP
     FROM
@@ -60,8 +60,8 @@ spark AS (
         amount_unadj,
         amount,
         depositor_address,
-        'spark V3' AS platform,
-        'polygon' AS blockchain,
+        'Spark' AS platform,
+        'gnosis' AS blockchain,
         _LOG_ID,
         _INSERTED_TIMESTAMP
     FROM
@@ -96,8 +96,8 @@ agave AS (
         amount_unadj,
         amount,
         depositor_address,
-        'agave V3' AS platform,
-        'polygon' AS blockchain,
+        'Agave' AS platform,
+        'gnosis' AS blockchain,
         _LOG_ID,
         _INSERTED_TIMESTAMP
     FROM
@@ -132,8 +132,8 @@ realT AS (
         amount_unadj,
         amount,
         depositor_address,
-        'realT V3' AS platform,
-        'polygon' AS blockchain,
+        'realT' AS platform,
+        'gnosis' AS blockchain,
         _LOG_ID,
         _INSERTED_TIMESTAMP
     FROM

@@ -43,7 +43,7 @@ atoken_meta AS (
         utils.udf_hex_to_int(
             segmented_data [0] :: STRING
         ) :: INTEGER AS repayed_amount,
-        'RealT V3' AS RealT_version,
+        'realT' AS RealT_version,
         origin_to_address AS lending_pool_contract,
         origin_from_address AS repayer_address,
         _log_id,
@@ -91,7 +91,7 @@ SELECT
     lending_pool_contract,
     RealT_version AS platform,
     atoken_meta.underlying_symbol AS symbol,
-    'base' AS blockchain,
+    'gnosis' AS blockchain,
     _log_id,
     _inserted_timestamp
 FROM

@@ -26,7 +26,7 @@ aave AS (
     payer AS payer_address,
     borrower,
     'Aave V3' AS platform,
-    'polygon' AS blockchain,
+    'gnosis' AS blockchain,
     _LOG_ID,
     _INSERTED_TIMESTAMP
   FROM
@@ -59,8 +59,8 @@ spark AS (
     symbol AS token_symbol,
     payer AS payer_address,
     borrower,
-    'spark V3' AS platform,
-    'polygon' AS blockchain,
+    'Spark' AS platform,
+    'gnosis' AS blockchain,
     _LOG_ID,
     _INSERTED_TIMESTAMP
   FROM
@@ -93,8 +93,8 @@ agave AS (
     symbol AS token_symbol,
     payer AS payer_address,
     borrower,
-    'agave V3' AS platform,
-    'polygon' AS blockchain,
+    'Agave' AS platform,
+    'gnosis' AS blockchain,
     _LOG_ID,
     _INSERTED_TIMESTAMP
   FROM
@@ -127,8 +127,8 @@ realT AS (
     symbol AS token_symbol,
     payer AS payer_address,
     borrower,
-    'realT V3' AS platform,
-    'polygon' AS blockchain,
+    'realT' AS platform,
+    'gnosis' AS blockchain,
     _LOG_ID,
     _INSERTED_TIMESTAMP
   FROM

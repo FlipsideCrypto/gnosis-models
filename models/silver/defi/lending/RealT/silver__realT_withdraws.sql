@@ -43,7 +43,7 @@ withdraw AS(
             segmented_data [0] :: STRING
         ) :: INTEGER AS withdraw_amount,
         tx_hash,
-        'RealT V3' AS RealT_version,
+        'realT' AS RealT_version,
         origin_to_address AS lending_pool_contract,
         _inserted_timestamp,
         _log_id
@@ -87,7 +87,7 @@ SELECT
     depositor depositor_address,
     RealT_version AS platform,
     atoken_meta.underlying_symbol AS symbol,
-    'base' AS blockchain,
+    'gnosis' AS blockchain,
     _log_id,
     _inserted_timestamp
 FROM

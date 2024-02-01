@@ -24,7 +24,7 @@ WITH aave AS (
         amount_unadj,
         amount,
         platform,
-        'polygon' AS blockchain,
+        'gnosis' AS blockchain,
         A._LOG_ID,
         A._INSERTED_TIMESTAMP
     FROM
@@ -60,7 +60,7 @@ agave AS (
         amount_unadj,
         amount,
         platform,
-        'polygon' AS blockchain,
+        'gnosis' AS blockchain,
         A._LOG_ID,
         A._INSERTED_TIMESTAMP
     FROM
@@ -96,7 +96,7 @@ spark AS (
         amount_unadj,
         amount,
         platform,
-        'polygon' AS blockchain,
+        'gnosis' AS blockchain,
         A._LOG_ID,
         A._INSERTED_TIMESTAMP
     FROM
@@ -132,7 +132,7 @@ realT AS (
         amount_unadj,
         amount,
         platform,
-        'polygon' AS blockchain,
+        'gnosis' AS blockchain,
         A._LOG_ID,
         A._INSERTED_TIMESTAMP
     FROM

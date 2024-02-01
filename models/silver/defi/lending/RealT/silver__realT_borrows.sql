@@ -52,7 +52,7 @@ borrow AS (
         utils.udf_hex_to_int(
             segmented_data [3] :: STRING
         ) :: INTEGER AS borrowrate,
-        'RealT V3' AS RealT_version,
+        'realT' AS RealT_version,
         origin_from_address AS borrower_address,
         COALESCE(
             origin_to_address,
@@ -107,7 +107,7 @@ SELECT
     RealT_version AS platform,
     atoken_meta.underlying_symbol AS symbol,
     atoken_meta.underlying_decimals AS underlying_decimals,
-    'base' AS blockchain,
+    'gnosis' AS blockchain,
     _log_id,
     _inserted_timestamp
 FROM

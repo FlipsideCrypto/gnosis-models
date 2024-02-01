@@ -28,7 +28,7 @@ aave AS (
     debt_asset,
     debt_token_symbol AS debt_asset_symbol,
     'Aave V3' AS platform,
-    'polygon' AS blockchain,
+    'gnosis' AS blockchain,
     _LOG_ID,
     _INSERTED_TIMESTAMP
   FROM
@@ -64,8 +64,8 @@ spark AS (
     collateral_token_symbol AS collateral_asset_symbol,
     debt_asset,
     debt_token_symbol AS debt_asset_symbol,
-    'spark V3' AS platform,
-    'polygon' AS blockchain,
+    'Spark' AS platform,
+    'gnosis' AS blockchain,
     _LOG_ID,
     _INSERTED_TIMESTAMP
   FROM
@@ -101,8 +101,8 @@ agave AS (
     collateral_token_symbol AS collateral_asset_symbol,
     debt_asset,
     debt_token_symbol AS debt_asset_symbol,
-    'agave V3' AS platform,
-    'polygon' AS blockchain,
+    'Agave' AS platform,
+    'gnosis' AS blockchain,
     _LOG_ID,
     _INSERTED_TIMESTAMP
   FROM
@@ -138,8 +138,8 @@ realT AS (
     collateral_token_symbol AS collateral_asset_symbol,
     debt_asset,
     debt_token_symbol AS debt_asset_symbol,
-    'realT V3' AS platform,
-    'polygon' AS blockchain,
+    'realT' AS platform,
+    'gnosis' AS blockchain,
     _LOG_ID,
     _INSERTED_TIMESTAMP
   FROM

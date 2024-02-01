@@ -46,7 +46,7 @@ deposits AS(
         utils.udf_hex_to_int(
             segmented_data [1] :: STRING
         ) :: INTEGER AS deposit_quantity,
-        'RealT V3' AS RealT_version,
+        'realT' AS RealT_version,
         origin_from_address AS depositor_address,
         COALESCE(
             origin_to_address,
@@ -96,7 +96,7 @@ SELECT
     lending_pool_contract,
     RealT_version AS platform,
     atoken_meta.underlying_symbol AS symbol,
-    'base' AS blockchain,
+    'gnosis' AS blockchain,
     _log_id,
     _inserted_timestamp
 FROM

@@ -99,7 +99,7 @@ SELECT
     target_address AS target_address,
     aave_version AS platform,
     atoken_meta.underlying_symbol AS symbol,
-    'base' AS blockchain,
+    'gnosis' AS blockchain,
     _log_id,
     _inserted_timestamp
 FROM
