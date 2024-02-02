@@ -21,7 +21,7 @@ agave_token_pull AS (
         CONCAT('0x', SUBSTR(segmented_data [0] :: STRING, 27, 40)) :: STRING AS atoken_stable_debt_address,
         CONCAT('0x', SUBSTR(segmented_data [1] :: STRING, 27, 40)) :: STRING AS atoken_variable_debt_address,
         C.token_decimals AS a_token_decimals,
-        'agave V2' AS agave_version,
+        'Agave' AS agave_version,
         C.token_name AS a_token_name,
         c2.token_symbol AS underlying_symbol,
         CONCAT('0x', SUBSTR(topics [1] :: STRING, 27, 40)) AS underlying_address,
