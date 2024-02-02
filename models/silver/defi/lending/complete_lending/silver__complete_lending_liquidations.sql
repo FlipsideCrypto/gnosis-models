@@ -6,8 +6,8 @@
   tags = ['reorg','curated']
 ) }}
 
-WITH 
-aave AS (
+WITH aave AS (
+
   SELECT
     tx_hash,
     block_number,
@@ -155,29 +155,27 @@ WHERE
   )
 {% endif %}
 ),
-
-liquidation_union as (
-    SELECT
-        *
-    FROM
-        aave
-    UNION ALL
-    SELECT
-        *
-    FROM
-        agave
-    UNION ALL
-    SELECT
-        *
-    FROM
-        spark
-    UNION ALL
-    SELECT
-        *
-    FROM
-        realT
+liquidation_union AS (
+  SELECT
+    *
+  FROM
+    aave
+  UNION ALL
+  SELECT
+    *
+  FROM
+    agave
+  UNION ALL
+  SELECT
+    *
+  FROM
+    spark
+  UNION ALL
+  SELECT
+    *
+  FROM
+    realT
 ),
-
 contracts AS (
   SELECT
     *
@@ -260,13 +258,13 @@ FINAL AS (
     ON collateral_asset = C.contract_address
 )
 SELECT
-    *,
-    {{ dbt_utils.generate_surrogate_key(
-        ['tx_hash','event_index']
-    ) }} AS complete_lending_liquidations_id,
-    SYSDATE() AS inserted_timestamp,
-    SYSDATE() AS modified_timestamp,
-    '{{ invocation_id }}' AS _invocation_id
+  *,
+  {{ dbt_utils.generate_surrogate_key(
+    ['tx_hash','event_index']
+  ) }} AS complete_lending_liquidations_id,
+  SYSDATE() AS inserted_timestamp,
+  SYSDATE() AS modified_timestamp,
+  '{{ invocation_id }}' AS _invocation_id
 FROM
   FINAL qualify(ROW_NUMBER() over(PARTITION BY _log_id
 ORDER BY

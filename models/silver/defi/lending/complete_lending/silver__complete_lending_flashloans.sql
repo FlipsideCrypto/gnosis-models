@@ -6,8 +6,7 @@
   tags = ['reorg','curated']
 ) }}
 
-WITH 
-aave AS (
+WITH aave AS (
 
   SELECT
     tx_hash,
@@ -45,7 +44,6 @@ WHERE
 {% endif %}
 ),
 spark AS (
-
   SELECT
     tx_hash,
     block_number,
@@ -82,7 +80,6 @@ WHERE
 {% endif %}
 ),
 agave AS (
-
   SELECT
     tx_hash,
     block_number,
@@ -119,7 +116,6 @@ WHERE
 {% endif %}
 ),
 realT AS (
-
   SELECT
     tx_hash,
     block_number,
@@ -155,28 +151,27 @@ WHERE
   )
 {% endif %}
 ),
-flashloan_union as (
-    SELECT
-        *
-    FROM
-        aave
-    UNION ALL
-    SELECT
-        *
-    FROM
-        agave
-    UNION ALL
-    SELECT
-        *
-    FROM
-        spark
-    UNION ALL
-    SELECT
-        *
-    FROM
-        realT
+flashloan_union AS (
+  SELECT
+    *
+  FROM
+    aave
+  UNION ALL
+  SELECT
+    *
+  FROM
+    agave
+  UNION ALL
+  SELECT
+    *
+  FROM
+    spark
+  UNION ALL
+  SELECT
+    *
+  FROM
+    realT
 ),
-
 FINAL AS (
   SELECT
     tx_hash,

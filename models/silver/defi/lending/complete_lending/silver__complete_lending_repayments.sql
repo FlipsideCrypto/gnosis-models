@@ -6,8 +6,7 @@
   tags = ['reorg','curated']
 ) }}
 
-WITH 
-aave AS (
+WITH aave AS (
 
   SELECT
     tx_hash,
@@ -31,6 +30,7 @@ aave AS (
     _INSERTED_TIMESTAMP
   FROM
     {{ ref('silver__aave_repayments') }}
+
 {% if is_incremental() and 'aave' not in var('HEAL_CURATED_MODEL') %}
 WHERE
   _inserted_timestamp >= (
@@ -42,7 +42,6 @@ WHERE
 {% endif %}
 ),
 spark AS (
-
   SELECT
     tx_hash,
     block_number,
@@ -65,6 +64,7 @@ spark AS (
     _INSERTED_TIMESTAMP
   FROM
     {{ ref('silver__spark_repayments') }}
+
 {% if is_incremental() and 'spark' not in var('HEAL_CURATED_MODEL') %}
 WHERE
   _inserted_timestamp >= (
@@ -76,7 +76,6 @@ WHERE
 {% endif %}
 ),
 agave AS (
-
   SELECT
     tx_hash,
     block_number,
@@ -99,6 +98,7 @@ agave AS (
     _INSERTED_TIMESTAMP
   FROM
     {{ ref('silver__agave_repayments') }}
+
 {% if is_incremental() and 'agave' not in var('HEAL_CURATED_MODEL') %}
 WHERE
   _inserted_timestamp >= (
@@ -110,7 +110,6 @@ WHERE
 {% endif %}
 ),
 realT AS (
-
   SELECT
     tx_hash,
     block_number,
@@ -133,6 +132,7 @@ realT AS (
     _INSERTED_TIMESTAMP
   FROM
     {{ ref('silver__realT_repayments') }}
+
 {% if is_incremental() and 'realT' not in var('HEAL_CURATED_MODEL') %}
 WHERE
   _inserted_timestamp >= (
@@ -143,27 +143,26 @@ WHERE
   )
 {% endif %}
 ),
-
-repayments_union as (
-    SELECT
-        *
-    FROM
-        aave
-    UNION ALL
-    SELECT
-        *
-    FROM
-        agave
-    UNION ALL
-    SELECT
-        *
-    FROM
-        spark
-    UNION ALL
-    SELECT
-        *
-    FROM
-        realT
+repayments_union AS (
+  SELECT
+    *
+  FROM
+    aave
+  UNION ALL
+  SELECT
+    *
+  FROM
+    agave
+  UNION ALL
+  SELECT
+    *
+  FROM
+    spark
+  UNION ALL
+  SELECT
+    *
+  FROM
+    realT
 ),
 FINAL AS (
   SELECT
@@ -207,13 +206,13 @@ FINAL AS (
     ON A.token_address = C.contract_address
 )
 SELECT
-    *,
-    {{ dbt_utils.generate_surrogate_key(
-        ['tx_hash','event_index']
-    ) }} AS complete_lending_repayments_id,
-    SYSDATE() AS inserted_timestamp,
-    SYSDATE() AS modified_timestamp,
-    '{{ invocation_id }}' AS _invocation_id
+  *,
+  {{ dbt_utils.generate_surrogate_key(
+    ['tx_hash','event_index']
+  ) }} AS complete_lending_repayments_id,
+  SYSDATE() AS inserted_timestamp,
+  SYSDATE() AS modified_timestamp,
+  '{{ invocation_id }}' AS _invocation_id
 FROM
   FINAL qualify(ROW_NUMBER() over(PARTITION BY _log_id
 ORDER BY

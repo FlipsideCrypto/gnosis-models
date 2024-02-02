@@ -43,7 +43,6 @@ WHERE
 {% endif %}
 ),
 agave AS (
-
     SELECT
         tx_hash,
         block_number,
@@ -79,7 +78,6 @@ WHERE
 {% endif %}
 ),
 spark AS (
-
     SELECT
         tx_hash,
         block_number,
@@ -115,7 +113,6 @@ WHERE
 {% endif %}
 ),
 realT AS (
-
     SELECT
         tx_hash,
         block_number,
@@ -150,7 +147,7 @@ WHERE
     )
 {% endif %}
 ),
-borrow_union as (
+borrow_union AS (
     SELECT
         *
     FROM

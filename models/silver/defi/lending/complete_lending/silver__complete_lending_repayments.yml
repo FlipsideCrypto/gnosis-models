@@ -27,8 +27,7 @@ models:
           - not_null
       - name: PAYER
         tests:
-          - not_null:
-              where: PLATFORM <> 'Silo'
+          - not_null
       - name: BORROWER
         tests:
           - not_null

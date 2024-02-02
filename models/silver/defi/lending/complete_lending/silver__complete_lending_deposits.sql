@@ -41,7 +41,6 @@ WHERE
 {% endif %}
 ),
 agave AS (
-
   SELECT
     tx_hash,
     block_number,
@@ -75,7 +74,6 @@ WHERE
 {% endif %}
 ),
 spark AS (
-
   SELECT
     tx_hash,
     block_number,
@@ -109,7 +107,6 @@ WHERE
 {% endif %}
 ),
 realT AS (
-
   SELECT
     tx_hash,
     block_number,
@@ -142,26 +139,26 @@ WHERE
   )
 {% endif %}
 ),
-deposit_union as (
-    SELECT
-        *
-    FROM
-        aave
-    UNION ALL
-    SELECT
-        *
-    FROM
-        agave
-    UNION ALL
-    SELECT
-        *
-    FROM
-        spark
-    UNION ALL
-    SELECT
-        *
-    FROM
-        realT
+deposit_union AS (
+  SELECT
+    *
+  FROM
+    aave
+  UNION ALL
+  SELECT
+    *
+  FROM
+    agave
+  UNION ALL
+  SELECT
+    *
+  FROM
+    spark
+  UNION ALL
+  SELECT
+    *
+  FROM
+    realT
 ),
 FINAL AS (
   SELECT
@@ -205,13 +202,13 @@ FINAL AS (
     ON A.token_address = C.contract_address
 )
 SELECT
-      *,
-    {{ dbt_utils.generate_surrogate_key(
-        ['tx_hash','event_index']
-    ) }} AS complete_lending_deposits_id,
-    SYSDATE() AS inserted_timestamp,
-    SYSDATE() AS modified_timestamp,
-    '{{ invocation_id }}' AS _invocation_id
+  *,
+  {{ dbt_utils.generate_surrogate_key(
+    ['tx_hash','event_index']
+  ) }} AS complete_lending_deposits_id,
+  SYSDATE() AS inserted_timestamp,
+  SYSDATE() AS modified_timestamp,
+  '{{ invocation_id }}' AS _invocation_id
 FROM
   FINAL qualify(ROW_NUMBER() over(PARTITION BY _log_id
 ORDER BY

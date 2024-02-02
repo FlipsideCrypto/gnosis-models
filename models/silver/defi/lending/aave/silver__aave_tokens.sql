@@ -32,10 +32,6 @@ WITH DECODE AS (
         l
     WHERE
         topics [0] = '0xb19e051f8af41150ccccb3fc2c2d8d15f4a4cf434f32a559ba75fe73d6eea20b'
-    {# AND
-        aave_version_pool IN 
-        ('0x794a61358d6845594f94dc1db02a252b5b4814ad',
-        '0x8dff5e27ea6b7ac08ebfdf9eb090f32ee9a30fcf') #}
 
 {% if is_incremental() %}
 AND _inserted_timestamp >= (

@@ -6,8 +6,7 @@
     tags = ['reorg','curated']
 ) }}
 
-WITH 
-aave AS (
+WITH aave AS (
 
     SELECT
         tx_hash,
@@ -44,7 +43,6 @@ WHERE
 {% endif %}
 ),
 spark AS (
-
     SELECT
         tx_hash,
         block_number,
@@ -80,7 +78,6 @@ WHERE
 {% endif %}
 ),
 agave AS (
-
     SELECT
         tx_hash,
         block_number,
@@ -116,7 +113,6 @@ WHERE
 {% endif %}
 ),
 realT AS (
-
     SELECT
         tx_hash,
         block_number,
@@ -151,7 +147,7 @@ WHERE
     )
 {% endif %}
 ),
-withdraws_union as (
+withdraws_union AS (
     SELECT
         *
     FROM
@@ -172,7 +168,6 @@ withdraws_union as (
     FROM
         realT
 ),
-
 FINAL AS (
     SELECT
         tx_hash,
