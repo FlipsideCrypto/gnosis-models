@@ -23,7 +23,7 @@ atoken_meta AS (
         atoken_stable_debt_address,
         atoken_variable_debt_address
     FROM
-        {{ ref('silver__realT_tokens') }}
+        {{ ref('silver__realt_tokens') }}
 ),
  repay AS(
 
@@ -37,13 +37,13 @@ atoken_meta AS (
         origin_function_signature,
         contract_address,
         regexp_substr_all(SUBSTR(DATA, 3, len(DATA)), '.{64}') AS segmented_data,
-        CONCAT('0x', SUBSTR(topics [1] :: STRING, 27, 40)) AS RealT_market,
+        CONCAT('0x', SUBSTR(topics [1] :: STRING, 27, 40)) AS realt_market,
         CONCAT('0x', SUBSTR(topics [2] :: STRING, 27, 40)) AS borrower_address,
         CONCAT('0x', SUBSTR(topics [3] :: STRING, 27, 40)) AS repayer,
         utils.udf_hex_to_int(
             segmented_data [0] :: STRING
         ) :: INTEGER AS repayed_amount,
-        'realT' AS RealT_version,
+        'realT' AS realt_version,
         origin_to_address AS lending_pool_contract,
         origin_from_address AS repayer_address,
         _log_id,
@@ -75,8 +75,8 @@ SELECT
     origin_to_address,
     origin_function_signature,
     contract_address,
-    RealT_market,
-    atoken_meta.atoken_address AS RealT_token,
+    realt_market,
+    atoken_meta.atoken_address AS realt_token,
     repayed_amount AS amount_unadj,
     repayed_amount / pow(
         10,
@@ -85,7 +85,7 @@ SELECT
     repayer_address AS payer,
     borrower_address AS borrower,
     lending_pool_contract,
-    RealT_version AS platform,
+    realt_version AS platform,
     atoken_meta.underlying_symbol AS symbol,
     'gnosis' AS blockchain,
     _log_id,
@@ -93,6 +93,6 @@ SELECT
 FROM
     repay
     LEFT JOIN atoken_meta
-    ON repay.RealT_market = atoken_meta.underlying_address qualify(ROW_NUMBER() over(PARTITION BY _log_id
+    ON repay.realt_market = atoken_meta.underlying_address qualify(ROW_NUMBER() over(PARTITION BY _log_id
 ORDER BY
     _inserted_timestamp DESC)) = 1

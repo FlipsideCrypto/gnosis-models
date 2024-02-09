@@ -118,7 +118,7 @@ WHERE
   )
 {% endif %}
 ),
-realT AS (
+realt AS (
   SELECT
     tx_hash,
     block_number,
@@ -133,19 +133,19 @@ realT AS (
     amount_unadj,
     amount AS liquidated_amount,
     NULL AS liquidated_amount_usd,
-    collateral_realT_token AS protocol_collateral_asset,
+    collateral_realt_token AS protocol_collateral_asset,
     collateral_asset,
     collateral_token_symbol AS collateral_asset_symbol,
     debt_asset,
     debt_token_symbol AS debt_asset_symbol,
-    'realT' AS platform,
+    'realt' AS platform,
     'gnosis' AS blockchain,
     _LOG_ID,
     _INSERTED_TIMESTAMP
   FROM
-    {{ ref('silver__realT_liquidations') }}
+    {{ ref('silver__realt_liquidations') }}
 
-{% if is_incremental() and 'realT' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'realt' not in var('HEAL_CURATED_MODEL') %}
 WHERE
   _inserted_timestamp >= (
     SELECT
@@ -174,7 +174,7 @@ liquidation_union AS (
   SELECT
     *
   FROM
-    realT
+    realt
 ),
 contracts AS (
   SELECT

@@ -23,7 +23,7 @@ atoken_meta AS (
         atoken_stable_debt_address,
         atoken_variable_debt_address
     FROM
-        {{ ref('silver__realT_tokens') }}
+        {{ ref('silver__realt_tokens') }}
 ),
 liquidation AS(
 
@@ -47,7 +47,7 @@ liquidation AS(
             segmented_data [1] :: STRING
         ) :: INTEGER AS liquidated_amount,
         CONCAT('0x', SUBSTR(segmented_data [2] :: STRING, 25, 40)) AS liquidator_address,
-        'realT' AS RealT_version,
+        'realT' AS realt_version,
         COALESCE(
             origin_to_address,
             contract_address
@@ -82,17 +82,17 @@ SELECT
     origin_function_signature,
     contract_address,
     collateral_asset,
-    amc.atoken_address AS collateral_RealT_token,
+    amc.atoken_address AS collateral_realt_token,
     liquidated_amount AS amount_unadj,
     liquidated_amount / pow(
         10,
         amc.atoken_decimals
     ) AS amount,
     debt_asset,
-    amd.atoken_address AS debt_RealT_token,
+    amd.atoken_address AS debt_realt_token,
     liquidator_address AS liquidator,
     borrower_address AS borrower,
-    RealT_version AS platform,
+    realt_version AS platform,
     amc.underlying_symbol AS collateral_token_symbol,
     amd.underlying_symbol AS debt_token_symbol,
     'gnosis' AS blockchain,

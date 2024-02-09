@@ -23,7 +23,7 @@ atoken_meta AS (
         atoken_stable_debt_address,
         atoken_variable_debt_address
     FROM
-        {{ ref('silver__realT_tokens') }}
+        {{ ref('silver__realt_tokens') }}
 ),
 deposits AS(
 
@@ -37,7 +37,7 @@ deposits AS(
         origin_function_signature,
         contract_address,
         regexp_substr_all(SUBSTR(DATA, 3, len(DATA)), '.{64}') AS segmented_data,
-        CONCAT('0x', SUBSTR(topics [1] :: STRING, 27, 40)) AS RealT_market,
+        CONCAT('0x', SUBSTR(topics [1] :: STRING, 27, 40)) AS realt_market,
         CONCAT('0x', SUBSTR(topics [2] :: STRING, 27, 40)) AS onBehalfOf,
         utils.udf_hex_to_int(
             topics [3] :: STRING
@@ -46,7 +46,7 @@ deposits AS(
         utils.udf_hex_to_int(
             segmented_data [1] :: STRING
         ) :: INTEGER AS deposit_quantity,
-        'realT' AS RealT_version,
+        'realT' AS realt_version,
         origin_from_address AS depositor_address,
         COALESCE(
             origin_to_address,
@@ -81,8 +81,8 @@ SELECT
     origin_to_address,
     origin_function_signature,
     contract_address,
-    RealT_market,
-    atoken_meta.atoken_address AS RealT_token,
+    realt_market,
+    atoken_meta.atoken_address AS realt_token,
     deposit_quantity AS amount_unadj,
     deposit_quantity / pow(
         10,
@@ -90,7 +90,7 @@ SELECT
     ) AS amount,
     depositor_address,
     lending_pool_contract,
-    RealT_version AS platform,
+    realt_version AS platform,
     atoken_meta.underlying_symbol AS symbol,
     'gnosis' AS blockchain,
     _log_id,
@@ -98,6 +98,6 @@ SELECT
 FROM
     deposits
     LEFT JOIN atoken_meta
-    ON deposits.RealT_market = atoken_meta.underlying_address qualify(ROW_NUMBER() over(PARTITION BY _log_id
+    ON deposits.realt_market = atoken_meta.underlying_address qualify(ROW_NUMBER() over(PARTITION BY _log_id
 ORDER BY
     _inserted_timestamp DESC)) = 1

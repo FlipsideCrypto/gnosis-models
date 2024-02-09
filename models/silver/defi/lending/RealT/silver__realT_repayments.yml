@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: silver__realT_repayments
+  - name: silver__realt_repayments
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
@@ -22,10 +22,10 @@ models:
       - name: EVENT_INDEX
         tests:
           - not_null
-      - name: RealT_MARKET
+      - name: realt_MARKET
         tests:
           - not_null 
-      - name: RealT_TOKEN
+      - name: realt_TOKEN
       - name: AMOUNT_UNADJ
         tests: 
           - not_null

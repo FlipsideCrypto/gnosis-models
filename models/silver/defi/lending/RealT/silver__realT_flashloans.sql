@@ -23,7 +23,7 @@ atoken_meta AS (
         atoken_stable_debt_address,
         atoken_variable_debt_address
     FROM
-        {{ ref('silver__realT_tokens') }}
+        {{ ref('silver__realt_tokens') }}
 ),
 flashloan AS (
 
@@ -39,7 +39,7 @@ flashloan AS (
         regexp_substr_all(SUBSTR(DATA, 3, len(DATA)), '.{64}') AS segmented_data,
         CONCAT('0x', SUBSTR(topics [1] :: STRING, 27, 40)) AS target_address,
         origin_to_address AS initiator_address,
-        CONCAT('0x', SUBSTR(topics [3] :: STRING, 27, 40)) AS RealT_market,
+        CONCAT('0x', SUBSTR(topics [3] :: STRING, 27, 40)) AS realt_market,
         utils.udf_hex_to_int(
             segmented_data [0] :: STRING
         ) :: INTEGER AS flashloan_quantity,
@@ -53,7 +53,7 @@ flashloan AS (
             origin_to_address,
             contract_address
         ) AS lending_pool_contract,
-        'realT' AS RealT_version,
+        'realT' AS realt_version,
         _inserted_timestamp,
         _log_id
     FROM
@@ -83,8 +83,8 @@ SELECT
     origin_to_address,
     origin_function_signature,
     contract_address,
-    RealT_market,
-    atoken_meta.atoken_address AS RealT_token,
+    realt_market,
+    atoken_meta.atoken_address AS realt_token,
     flashloan_quantity AS flashloan_amount_unadj,
     flashloan_quantity / pow(
         10,
@@ -97,7 +97,7 @@ SELECT
     ) AS premium_amount,
     initiator_address AS initiator_address,
     target_address AS target_address,
-    RealT_version AS platform,
+    realt_version AS platform,
     atoken_meta.underlying_symbol AS symbol,
     'gnosis' AS blockchain,
     _log_id,
@@ -105,6 +105,6 @@ SELECT
 FROM
     flashloan
     LEFT JOIN atoken_meta
-    ON flashloan.RealT_market = atoken_meta.underlying_address qualify(ROW_NUMBER() over(PARTITION BY _log_id
+    ON flashloan.realt_market = atoken_meta.underlying_address qualify(ROW_NUMBER() over(PARTITION BY _log_id
 ORDER BY
     _inserted_timestamp DESC)) = 1

@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: silver__realT_deposits
+  - name: silver__realt_deposits
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
@@ -31,7 +31,7 @@ models:
       - name: EVENT_INDEX
         tests:
           - not_null
-      - name: RealT_MARKET
+      - name: realt_MARKET
         tests:
           - not_null 
       - name: DEPOSITOR_ADDRESS

@@ -112,7 +112,7 @@ WHERE
     )
 {% endif %}
 ),
-realT AS (
+realt AS (
     SELECT
         tx_hash,
         block_number,
@@ -133,9 +133,9 @@ realT AS (
         A._LOG_ID,
         A._INSERTED_TIMESTAMP
     FROM
-        {{ ref('silver__realT_borrows') }} A
+        {{ ref('silver__realt_borrows') }} A
 
-{% if is_incremental() and 'realT' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'realt' not in var('HEAL_CURATED_MODEL') %}
 WHERE
     A._inserted_timestamp >= (
         SELECT
@@ -166,7 +166,7 @@ borrow_union AS (
     SELECT
         *
     FROM
-        realT
+        realt
 ),
 FINAL AS (
     SELECT

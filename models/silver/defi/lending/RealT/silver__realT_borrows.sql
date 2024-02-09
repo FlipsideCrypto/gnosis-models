@@ -6,7 +6,7 @@
     tags = ['reorg','curated']
 ) }}
 
-WITH --borrows from RealT LendingPool contracts
+WITH --borrows from realt LendingPool contracts
 atoken_meta AS (
     SELECT
         atoken_address,
@@ -23,7 +23,7 @@ atoken_meta AS (
         atoken_stable_debt_address,
         atoken_variable_debt_address
     FROM
-        {{ ref('silver__realT_tokens') }}
+        {{ ref('silver__realt_tokens') }}
 ),
 borrow AS (
 
@@ -37,7 +37,7 @@ borrow AS (
         origin_function_signature,
         contract_address,
         regexp_substr_all(SUBSTR(DATA, 3, len(DATA)), '.{64}') AS segmented_data,
-        CONCAT('0x', SUBSTR(topics [1] :: STRING, 27, 40)) AS RealT_market,
+        CONCAT('0x', SUBSTR(topics [1] :: STRING, 27, 40)) AS realt_market,
         CONCAT('0x', SUBSTR(topics [2] :: STRING, 27, 40)) AS onBehalfOf,
         utils.udf_hex_to_int(
             topics [3] :: STRING
@@ -52,7 +52,7 @@ borrow AS (
         utils.udf_hex_to_int(
             segmented_data [3] :: STRING
         ) :: INTEGER AS borrowrate,
-        'realT' AS RealT_version,
+        'realT' AS realt_version,
         origin_from_address AS borrower_address,
         COALESCE(
             origin_to_address,
@@ -87,8 +87,8 @@ SELECT
     origin_to_address,
     origin_function_signature,
     contract_address,
-    RealT_market,
-    atoken_meta.atoken_address AS RealT_token,
+    realt_market,
+    atoken_meta.atoken_address AS realt_token,
     borrow_quantity AS amount_unadj,
     borrow_quantity / pow(
         10,
@@ -100,7 +100,7 @@ SELECT
         ELSE 'Stable Rate'
     END AS borrow_rate_mode,
     lending_pool_contract,
-    RealT_version AS platform,
+    realt_version AS platform,
     atoken_meta.underlying_symbol AS symbol,
     atoken_meta.underlying_decimals AS underlying_decimals,
     'gnosis' AS blockchain,
@@ -109,6 +109,6 @@ SELECT
 FROM
     borrow
     LEFT JOIN atoken_meta
-    ON borrow.RealT_market = atoken_meta.underlying_address qualify(ROW_NUMBER() over(PARTITION BY _log_id
+    ON borrow.realt_market = atoken_meta.underlying_address qualify(ROW_NUMBER() over(PARTITION BY _log_id
 ORDER BY
     _inserted_timestamp DESC)) = 1

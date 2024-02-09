@@ -3,7 +3,7 @@
     incremental_strategy = 'delete+insert',
     unique_key = "block_number",
     cluster_by = ['block_timestamp::DATE'],
-    tags = ['non_realtime','reorg','curated']
+    tags = ['reorg','curated']
 ) }}
 
 WITH 
@@ -23,7 +23,7 @@ atoken_meta AS (
         atoken_stable_debt_address,
         atoken_variable_debt_address
     FROM
-        {{ ref('silver__realT_tokens') }}
+        {{ ref('silver__realt_tokens') }}
 ),
 withdraw AS(
 
@@ -36,14 +36,14 @@ withdraw AS(
         origin_function_signature,
         contract_address,
         regexp_substr_all(SUBSTR(DATA, 3, len(DATA)), '.{64}') AS segmented_data,
-        CONCAT('0x', SUBSTR(topics [1] :: STRING, 27, 40)) AS RealT_market,
+        CONCAT('0x', SUBSTR(topics [1] :: STRING, 27, 40)) AS realt_market,
         CONCAT('0x', SUBSTR(topics [2] :: STRING, 27, 40)) AS useraddress,
         CONCAT('0x', SUBSTR(topics [3] :: STRING, 27, 40)) AS depositor,
         utils.udf_hex_to_int(
             segmented_data [0] :: STRING
         ) :: INTEGER AS withdraw_amount,
         tx_hash,
-        'realT' AS RealT_version,
+        'realT' AS realt_version,
         origin_to_address AS lending_pool_contract,
         _inserted_timestamp,
         _log_id
@@ -74,15 +74,15 @@ SELECT
     origin_to_address,
     origin_function_signature,
     contract_address,
-    RealT_market,
-    atoken_meta.atoken_address AS RealT_token,
+    realt_market,
+    atoken_meta.atoken_address AS realt_token,
     withdraw_amount AS amount_unadj,
     withdraw_amount / pow(
         10,
         atoken_meta.underlying_decimals
     ) AS amount,
     depositor depositor_address,
-    RealT_version AS platform,
+    realt_version AS platform,
     atoken_meta.underlying_symbol AS symbol,
     'gnosis' AS blockchain,
     _log_id,
@@ -90,6 +90,6 @@ SELECT
 FROM
     withdraw
     LEFT JOIN atoken_meta
-    ON withdraw.RealT_market = atoken_meta.underlying_address qualify(ROW_NUMBER() over(PARTITION BY _log_id
+    ON withdraw.realt_market = atoken_meta.underlying_address qualify(ROW_NUMBER() over(PARTITION BY _log_id
 ORDER BY
     _inserted_timestamp DESC)) = 1

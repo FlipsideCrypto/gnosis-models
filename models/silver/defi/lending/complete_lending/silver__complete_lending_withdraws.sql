@@ -112,7 +112,7 @@ WHERE
     )
 {% endif %}
 ),
-realT AS (
+realt AS (
     SELECT
         tx_hash,
         block_number,
@@ -128,14 +128,14 @@ realT AS (
         amount_unadj,
         amount,
         depositor_address,
-        'realT' AS platform,
+        'realt' AS platform,
         'gnosis' AS blockchain,
         _LOG_ID,
         _INSERTED_TIMESTAMP
     FROM
-        {{ ref('silver__realT_withdraws') }}
+        {{ ref('silver__realt_withdraws') }}
 
-{% if is_incremental() and 'realT' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'realt' not in var('HEAL_CURATED_MODEL') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
@@ -166,7 +166,7 @@ withdraws_union AS (
     SELECT
         *
     FROM
-        realT
+        realt
 ),
 FINAL AS (
     SELECT

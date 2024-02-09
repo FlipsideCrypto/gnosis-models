@@ -109,7 +109,7 @@ WHERE
   )
 {% endif %}
 ),
-realT AS (
+realt AS (
   SELECT
     tx_hash,
     block_number,
@@ -126,14 +126,14 @@ realT AS (
     symbol AS token_symbol,
     payer AS payer_address,
     borrower,
-    'realT' AS platform,
+    'realt' AS platform,
     'gnosis' AS blockchain,
     _LOG_ID,
     _INSERTED_TIMESTAMP
   FROM
-    {{ ref('silver__realT_repayments') }}
+    {{ ref('silver__realt_repayments') }}
 
-{% if is_incremental() and 'realT' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'realt' not in var('HEAL_CURATED_MODEL') %}
 WHERE
   _inserted_timestamp >= (
     SELECT
@@ -162,7 +162,7 @@ repayments_union AS (
   SELECT
     *
   FROM
-    realT
+    realt
 ),
 FINAL AS (
   SELECT

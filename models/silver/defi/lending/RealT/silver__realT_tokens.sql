@@ -100,7 +100,7 @@ a_token_step_2 AS (
         atoken_symbol,
         _inserted_timestamp,
         _log_id,
-        'realT' AS protocol
+        'realt' AS protocol
     FROM
         a_token_step_1
 )
