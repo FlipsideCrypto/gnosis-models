@@ -22,10 +22,10 @@ models:
       - name: TX_HASH
         tests:
           - not_null
-      - name: realt_MARKET
+      - name: REALT_MARKET
         tests:
           - not_null 
-      - name: realt_TOKEN
+      - name: REALT_TOKEN
       - name: FLASHLOAN_AMOUNT_UNADJ
         tests: 
           - not_null

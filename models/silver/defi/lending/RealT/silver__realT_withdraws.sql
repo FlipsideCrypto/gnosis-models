@@ -6,8 +6,8 @@
     tags = ['reorg','curated']
 ) }}
 
-WITH 
-atoken_meta AS (
+WITH atoken_meta AS (
+
     SELECT
         atoken_address,
         version_pool,
@@ -26,7 +26,6 @@ atoken_meta AS (
         {{ ref('silver__realt_tokens') }}
 ),
 withdraw AS(
-
     SELECT
         block_number,
         block_timestamp,
@@ -62,7 +61,12 @@ AND _inserted_timestamp >= (
         {{ this }}
 )
 {% endif %}
-AND contract_address IN (SELECT distinct(version_pool) from atoken_meta)
+AND contract_address IN (
+    SELECT
+        DISTINCT(version_pool)
+    FROM
+        atoken_meta
+)
 AND tx_status = 'SUCCESS' --excludes failed txs
 )
 SELECT

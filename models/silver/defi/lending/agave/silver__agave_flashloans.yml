@@ -22,10 +22,10 @@ models:
       - name: TX_HASH
         tests:
           - not_null
-      - name: agave_MARKET
+      - name: AGAVE_MARKET
         tests:
           - not_null 
-      - name: agave_TOKEN
+      - name: AGAVE_TOKEN
       - name: FLASHLOAN_AMOUNT_UNADJ
         tests: 
           - not_null

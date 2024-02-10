@@ -6,8 +6,8 @@
     tags = ['reorg','curated']
 ) }}
 
-WITH 
-atoken_meta AS (
+WITH atoken_meta AS (
+
     SELECT
         atoken_address,
         version_pool,
@@ -26,7 +26,6 @@ atoken_meta AS (
         {{ ref('silver__realt_tokens') }}
 ),
 liquidation AS(
-
     SELECT
         tx_hash,
         block_number,
@@ -57,7 +56,7 @@ liquidation AS(
     FROM
         {{ ref('silver__logs') }}
     WHERE
-        topics [0] :: STRING ='0xe413a321e8681d831f4dbccbca790d2952b56f977908e45be37335533e005286'
+        topics [0] :: STRING = '0xe413a321e8681d831f4dbccbca790d2952b56f977908e45be37335533e005286'
 
 {% if is_incremental() %}
 AND _inserted_timestamp >= (
@@ -69,7 +68,12 @@ AND _inserted_timestamp >= (
         {{ this }}
 )
 {% endif %}
-AND contract_address IN (SELECT distinct(version_pool) from atoken_meta)
+AND contract_address IN (
+    SELECT
+        DISTINCT(version_pool)
+    FROM
+        atoken_meta
+)
 AND tx_status = 'SUCCESS' --excludes failed txs
 )
 SELECT

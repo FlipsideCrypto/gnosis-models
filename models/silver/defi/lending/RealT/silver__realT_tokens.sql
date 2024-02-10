@@ -64,7 +64,7 @@ a_token_step_1 AS (
     WHERE
         atoken_name LIKE '%RMM%'
 ),
-debt_tokens AS ( 
+debt_tokens AS (
     SELECT
         block_number AS atoken_created_block,
         contract_address AS a_token_address,
@@ -106,9 +106,9 @@ a_token_step_2 AS (
 )
 SELECT
     A.atoken_created_block,
-    a.tx_hash,
-    a.token_creator_address,
-    a.version_pool,
+    A.tx_hash,
+    A.token_creator_address,
+    A.version_pool,
     A.atoken_symbol AS atoken_symbol,
     A.a_token_address AS atoken_address,
     b.atoken_stable_debt_address,

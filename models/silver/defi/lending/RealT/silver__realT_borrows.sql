@@ -8,6 +8,7 @@
 
 WITH --borrows from realt LendingPool contracts
 atoken_meta AS (
+
     SELECT
         atoken_address,
         version_pool,
@@ -26,7 +27,6 @@ atoken_meta AS (
         {{ ref('silver__realt_tokens') }}
 ),
 borrow AS (
-
     SELECT
         tx_hash,
         block_number,
@@ -63,7 +63,7 @@ borrow AS (
     FROM
         {{ ref('silver__logs') }}
     WHERE
-        topics [0] :: STRING  = '0xc6a898309e823ee50bac64e45ca8adba6690e99e7841c45d754e2a38e9019d9b' 
+        topics [0] :: STRING = '0xc6a898309e823ee50bac64e45ca8adba6690e99e7841c45d754e2a38e9019d9b'
 
 {% if is_incremental() %}
 AND _inserted_timestamp >= (
@@ -75,7 +75,12 @@ AND _inserted_timestamp >= (
         {{ this }}
 )
 {% endif %}
-AND contract_address IN (SELECT distinct(version_pool) from atoken_meta)
+AND contract_address IN (
+    SELECT
+        DISTINCT(version_pool)
+    FROM
+        atoken_meta
+)
 AND tx_status = 'SUCCESS' --excludes failed txs
 )
 SELECT

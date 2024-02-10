@@ -22,7 +22,7 @@ models:
       - name: EVENT_INDEX
         tests:
           - not_null
-      - name: agave_MARKET
+      - name: AGAVE_MARKET
         tests:
           - not_null 
       - name: agave_TOKEN
