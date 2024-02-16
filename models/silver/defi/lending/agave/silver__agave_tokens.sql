@@ -52,6 +52,12 @@ agave_token_pull AS (
         FROM
             {{ this }}
     )
+    AND CONCAT('0x', SUBSTR(topics [2] :: STRING, 27, 40)) NOT IN (
+    SELECT
+        atoken_address
+    FROM
+        {{ this }}
+)
     {% endif %}
 ),
 agave_token_pull_2 AS (
