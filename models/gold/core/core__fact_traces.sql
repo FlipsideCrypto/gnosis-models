@@ -44,10 +44,7 @@ SELECT
     COALESCE(
         modified_timestamp,
         '2000-01-01'
-    ) AS modified_timestamp,
-    xdai_value,
-    xdai_value_precise_raw,
-    xdai_value_precise
+    ) AS modified_timestamp
 FROM
     (
         SELECT

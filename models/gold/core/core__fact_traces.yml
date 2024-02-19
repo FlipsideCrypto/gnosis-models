@@ -1,7 +1,7 @@
 version: 2
 models:
   - name: core__fact_traces
-    description: 'Deprecating soon! The columns `XDAI_VALUE`, `XDAI_VALUE_PRECISE_RAW` and `XDAI_VALUE_PRECISE` will be deprecated on February 14, 2024. Please migrate to `VALUE`, `VALUE_PRECISE_RAW` and `VALUE_PRECISE`. Note: These columns are the ONLY changes being made to this table.'  
+    description: '{{ doc("gno_traces_table_doc") }}'   
 
     columns:
       - name: BLOCK_NUMBER
@@ -14,12 +14,6 @@ models:
         description: '{{ doc("gno_traces_from") }}'
       - name: TO_ADDRESS
         description: '{{ doc("gno_traces_to") }}'
-      - name: XDAI_VALUE
-        description: '{{ doc("amount_deprecation") }}'
-      - name: XDAI_VALUE_PRECISE_RAW
-        description: '{{ doc("amount_deprecation") }}'
-      - name: XDAI_VALUE_PRECISE
-        description: '{{ doc("amount_deprecation") }}'
       - name: VALUE
         description: '{{ doc("gno_traces_value") }}'
       - name: VALUE_PRECISE_RAW
