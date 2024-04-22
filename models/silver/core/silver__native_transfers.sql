@@ -106,7 +106,7 @@ SELECT
     '{{ invocation_id }}' AS _invocation_id
 FROM
     xdai_base A
-    LEFT JOIN {{ ref('price__ez_hourly_token_prices') }}
+    LEFT JOIN {{ ref('price__ez_prices_hourly') }}
     ON DATE_TRUNC(
         'hour',
         A.block_timestamp
