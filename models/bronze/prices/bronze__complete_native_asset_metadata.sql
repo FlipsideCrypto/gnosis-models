@@ -23,4 +23,7 @@ FROM
     ) }}
 WHERE
     blockchain = 'gnosis'
-    AND symbol = 'XDAI'
+    AND symbol IN (
+        'GNO',
+        'XDAI'
+    )
