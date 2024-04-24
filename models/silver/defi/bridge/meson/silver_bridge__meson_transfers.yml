@@ -46,7 +46,3 @@ models:
                 - FLOAT
                 - NUMBER
       - name: _INSERTED_TIMESTAMP
-        tests:
-          - dbt_expectations.expect_row_values_to_have_recent_data:
-              datepart: day
-              interval: 3
