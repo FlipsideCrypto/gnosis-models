@@ -45,4 +45,3 @@ models:
                 - DECIMAL
                 - FLOAT
                 - NUMBER
-      - name: _INSERTED_TIMESTAMP
