@@ -48,15 +48,15 @@ There is more information on how to use dbt docs in the last section of this doc
 - [ez_lending_withdraws](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.defi__ez_lending_withdraws)
 
 ### Price Tables (gnosis.price)
-- [fact_hourly_token_prices](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.price__fact_hourly_token_prices)
-- [ez_hourly_token_prices](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.price__ez_hourly_token_prices)
 - [dim_asset_metadata](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.price__dim_asset_metadata)
+- [fact_prices_ohlc_hourly](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.price__fact_prices_ohlc_hourly)
 - [ez_asset_metadata](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.price__ez_asset_metadata)
+- [ez_prices_hourly](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.price__ez_prices_hourly)
 
 ### NFT Tables (gnosis.nft) ###
 - [ez_nft_transfers](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.nft__ez_nft_transfers)
 
-### Stats Tables (ethereum.stats)
+### Stats Tables (gnosis.stats)
 - [ez_core_metrics_hourly](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.stats__ez_core_metrics_hourly)
 
 ## **Helpful User-Defined Functions (UDFs)**
