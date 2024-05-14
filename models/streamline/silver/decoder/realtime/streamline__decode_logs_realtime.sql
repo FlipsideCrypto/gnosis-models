@@ -22,7 +22,7 @@ SELECT
         l.data,
         'address',
         l.contract_address
-    ) AS DATA
+    ) AS DATA 
 FROM
     {{ ref("silver__logs") }}
     l
