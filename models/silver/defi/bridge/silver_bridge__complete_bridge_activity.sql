@@ -1,9 +1,10 @@
+-- depends_on: {{ ref('silver__complete_token_prices') }}
 {{ config(
     materialized = 'incremental',
     incremental_strategy = 'delete+insert',
     unique_key = ['block_number','platform','version'],
     cluster_by = ['block_timestamp::DATE'],
-    tags = ['curated','reorg']
+    tags = ['curated','reorg','heal']
 ) }}
 
 WITH celer_cbridge AS (
@@ -31,11 +32,11 @@ WITH celer_cbridge AS (
     FROM
         {{ ref('silver_bridge__celer_cbridge_send') }}
 
-{% if is_incremental() and 'celer_cbridge' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'celer_cbridge' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var('LOOKBACK', '4 hours') }}'
         FROM
             {{ this }}
     )
@@ -66,11 +67,11 @@ hop AS (
     FROM
         {{ ref('silver_bridge__hop_transfersent') }}
 
-{% if is_incremental() and 'hop' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'hop' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var('LOOKBACK', '4 hours') }}'
         FROM
             {{ this }}
     )
@@ -101,11 +102,11 @@ meson AS (
     FROM
         {{ ref('silver_bridge__meson_transfers') }}
 
-{% if is_incremental() and 'meson' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'meson' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var('LOOKBACK', '4 hours') }}'
         FROM
             {{ this }}
     )

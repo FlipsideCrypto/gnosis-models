@@ -1,9 +1,10 @@
+-- depends_on: {{ ref('silver__complete_token_prices') }}
 {{ config(
-  materialized = 'incremental',
-  incremental_strategy = 'delete+insert',
-  unique_key = ['block_number','platform'],
-  cluster_by = ['block_timestamp::DATE'],
-  tags = ['reorg','curated']
+    materialized = 'incremental',
+    incremental_strategy = 'delete+insert',
+    unique_key = ['block_number','platform'],
+    cluster_by = ['block_timestamp::DATE'],
+    tags = ['reorg','curated','heal']
 ) }}
 
 WITH aave AS (
@@ -31,11 +32,11 @@ WITH aave AS (
   FROM
     {{ ref('silver__aave_repayments') }}
 
-{% if is_incremental() and 'aave' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'aave' not in var('HEAL_MODELS') %}
 WHERE
   _inserted_timestamp >= (
     SELECT
-      MAX(_inserted_timestamp) - INTERVAL '36 hours'
+      MAX(_inserted_timestamp) - INTERVAL '{{ var('LOOKBACK', '4 hours') }}'
     FROM
       {{ this }}
   )
@@ -65,11 +66,11 @@ spark AS (
   FROM
     {{ ref('silver__spark_repayments') }}
 
-{% if is_incremental() and 'spark' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'spark' not in var('HEAL_MODELS') %}
 WHERE
   _inserted_timestamp >= (
     SELECT
-      MAX(_inserted_timestamp) - INTERVAL '36 hours'
+      MAX(_inserted_timestamp) - INTERVAL '{{ var('LOOKBACK', '4 hours') }}'
     FROM
       {{ this }}
   )
@@ -99,11 +100,11 @@ agave AS (
   FROM
     {{ ref('silver__agave_repayments') }}
 
-{% if is_incremental() and 'agave' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'agave' not in var('HEAL_MODELS') %}
 WHERE
   _inserted_timestamp >= (
     SELECT
-      MAX(_inserted_timestamp) - INTERVAL '36 hours'
+      MAX(_inserted_timestamp) - INTERVAL '{{ var('LOOKBACK', '4 hours') }}'
     FROM
       {{ this }}
   )
@@ -133,11 +134,11 @@ realt AS (
   FROM
     {{ ref('silver__realt_repayments') }}
 
-{% if is_incremental() and 'realt' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'realt' not in var('HEAL_MODELS') %}
 WHERE
   _inserted_timestamp >= (
     SELECT
-      MAX(_inserted_timestamp) - INTERVAL '36 hours'
+      MAX(_inserted_timestamp) - INTERVAL '{{ var('LOOKBACK', '4 hours') }}'
     FROM
       {{ this }}
   )

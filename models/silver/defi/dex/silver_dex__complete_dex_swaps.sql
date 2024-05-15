@@ -1,9 +1,10 @@
+-- depends_on: {{ ref('silver__complete_token_prices') }}
 {{ config(
   materialized = 'incremental',
   incremental_strategy = 'delete+insert',
   unique_key = ['block_number','platform','version'],
   cluster_by = ['block_timestamp::DATE'],
-  tags = ['curated','reorg']
+  tags = ['curated','reorg','heal']
 ) }}
 
 WITH contracts AS (
@@ -31,7 +32,7 @@ prices AS (
         contracts
     )
 ),
-sushi_swaps AS (
+sushi AS (
   SELECT
     block_number,
     block_timestamp,
@@ -73,17 +74,17 @@ sushi_swaps AS (
     LEFT JOIN contracts c2
     ON s.token_out = c2.address
 
-{% if is_incremental() %}
+{% if is_incremental() and 'sushi' not in var('HEAL_MODELS') %}
 WHERE
   _inserted_timestamp >= (
     SELECT
-      MAX(_inserted_timestamp) - INTERVAL '36 hours'
+      MAX(_inserted_timestamp) - INTERVAL '{{ var('LOOKBACK', '4 hours') }}'
     FROM
       {{ this }}
   )
 {% endif %}
 ),
-curve_swaps AS (
+curve AS (
   SELECT
     block_number,
     block_timestamp,
@@ -143,16 +144,16 @@ curve_swaps AS (
       'null'
     ) <> COALESCE(token_symbol_out, 'null')
 
-{% if is_incremental() %}
+{% if is_incremental() and 'curve' not in var('HEAL_MODELS') %}
 AND _inserted_timestamp >= (
   SELECT
-    MAX(_inserted_timestamp) - INTERVAL '36 hours'
+    MAX(_inserted_timestamp) - INTERVAL '{{ var('LOOKBACK', '4 hours') }}'
   FROM
     {{ this }}
 )
 {% endif %}
 ),
-balancer_swaps AS (
+balancer AS (
   SELECT
     block_number,
     block_timestamp,
@@ -194,17 +195,17 @@ balancer_swaps AS (
     LEFT JOIN contracts c2
     ON s.token_out = c2.address
 
-{% if is_incremental() %}
+{% if is_incremental() and 'balancer' not in var('HEAL_MODELS') %}
 WHERE
   _inserted_timestamp >= (
     SELECT
-      MAX(_inserted_timestamp) - INTERVAL '36 hours'
+      MAX(_inserted_timestamp) - INTERVAL '{{ var('LOOKBACK', '4 hours') }}'
     FROM
       {{ this }}
   )
 {% endif %}
 ),
-honeyswap_swaps AS (
+honeyswap AS (
   SELECT
     block_number,
     block_timestamp,
@@ -246,17 +247,17 @@ honeyswap_swaps AS (
     LEFT JOIN contracts c2
     ON s.token_out = c2.address
 
-{% if is_incremental() %}
+{% if is_incremental() and 'honeyswap' not in var('HEAL_MODELS') %}
 WHERE
   _inserted_timestamp >= (
     SELECT
-      MAX(_inserted_timestamp) - INTERVAL '36 hours'
+      MAX(_inserted_timestamp) - INTERVAL '{{ var('LOOKBACK', '4 hours') }}'
     FROM
       {{ this }}
   )
 {% endif %}
 ),
-swapr_swaps AS (
+swapr AS (
   SELECT
     block_number,
     block_timestamp,
@@ -298,11 +299,11 @@ swapr_swaps AS (
     LEFT JOIN contracts c2
     ON s.token_out = c2.address
 
-{% if is_incremental() %}
+{% if is_incremental() and 'swapr' not in var('HEAL_MODELS') %}
 WHERE
   _inserted_timestamp >= (
     SELECT
-      MAX(_inserted_timestamp) - INTERVAL '36 hours'
+      MAX(_inserted_timestamp) - INTERVAL '{{ var('LOOKBACK', '4 hours') }}'
     FROM
       {{ this }}
   )

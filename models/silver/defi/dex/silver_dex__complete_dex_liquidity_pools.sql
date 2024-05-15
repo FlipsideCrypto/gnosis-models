@@ -3,7 +3,7 @@
   incremental_strategy = 'delete+insert',
   unique_key = ['block_number','platform','version'],
   cluster_by = ['block_timestamp::DATE'],
-  tags = ['curated','reorg']
+  tags = ['curated','reorg','heal']
 ) }}
 
 WITH contracts AS (
@@ -39,7 +39,7 @@ balancer AS (
   FROM
     {{ ref('silver_dex__balancer_pools') }}
 
-{% if is_incremental() %}
+{% if is_incremental() and 'balancer' not in var('HEAL_MODELS') %}
 WHERE
   _inserted_timestamp >= (
     SELECT
@@ -104,7 +104,7 @@ curve AS (
   FROM
     {{ ref('silver_dex__curve_pools') }}
 
-{% if is_incremental() %}
+{% if is_incremental() and 'curve' not in var('HEAL_MODELS') %}
 WHERE
   _inserted_timestamp >= (
     SELECT
@@ -133,7 +133,7 @@ honeyswap AS (
   FROM
     {{ ref('silver_dex__honeyswap_pools') }}
 
-{% if is_incremental() %}
+{% if is_incremental() and 'honeyswap' not in var('HEAL_MODELS') %}
 WHERE
   _inserted_timestamp >= (
     SELECT
@@ -160,7 +160,7 @@ swapr AS (
   FROM
     {{ ref('silver_dex__swapr_pools') }}
 
-{% if is_incremental() %}
+{% if is_incremental() and 'swapr' not in var('HEAL_MODELS') %}
 WHERE
   _inserted_timestamp >= (
     SELECT
@@ -187,7 +187,7 @@ sushi AS (
   FROM
     {{ ref('silver_dex__sushi_pools') }}
 
-{% if is_incremental() %}
+{% if is_incremental() and 'sushi' not in var('HEAL_MODELS') %}
 WHERE
   _inserted_timestamp >= (
     SELECT
