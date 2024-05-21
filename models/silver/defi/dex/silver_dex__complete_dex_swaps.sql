@@ -36,7 +36,7 @@ WITH sushi AS (
 WHERE
   _inserted_timestamp >= (
     SELECT
-      MAX(_inserted_timestamp) - INTERVAL '{{ var(' lookback ', ' 4 hours ') }}'
+      MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "4 hours") }}'
     FROM
       {{ this }}
   )
@@ -69,7 +69,7 @@ curve AS (
 {% if is_incremental() and 'curve' not in var('HEAL_MODELS') %}
 AND _inserted_timestamp >= (
   SELECT
-    MAX(_inserted_timestamp) - INTERVAL '{{ var(' lookback ', ' 4 hours ') }}'
+    MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "4 hours") }}'
   FROM
     {{ this }}
 )
@@ -103,7 +103,7 @@ balancer AS (
 WHERE
   _inserted_timestamp >= (
     SELECT
-      MAX(_inserted_timestamp) - INTERVAL '{{ var(' lookback ', ' 4 hours ') }}'
+      MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "4 hours") }}'
     FROM
       {{ this }}
   )
@@ -137,7 +137,7 @@ honeyswap AS (
 WHERE
   _inserted_timestamp >= (
     SELECT
-      MAX(_inserted_timestamp) - INTERVAL '{{ var(' lookback ', ' 4 hours ') }}'
+      MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "4 hours") }}'
     FROM
       {{ this }}
   )
@@ -171,7 +171,7 @@ swapr AS (
 WHERE
   _inserted_timestamp >= (
     SELECT
-      MAX(_inserted_timestamp) - INTERVAL '{{ var(' lookback ', ' 4 hours ') }}'
+      MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "4 hours") }}'
     FROM
       {{ this }}
   )
@@ -405,7 +405,7 @@ heal_model AS (
           SELECT
             MAX(
               _inserted_timestamp
-            ) - INTERVAL '{{ var(' lookback ', ' 4 hours ') }}'
+            ) - INTERVAL '{{ var("LOOKBACK", "4 hours") }}'
           FROM
             {{ this }}
         )
@@ -445,7 +445,7 @@ heal_model AS (
               SELECT
                 MAX(
                   _inserted_timestamp
-                ) - INTERVAL '{{ var(' lookback ', ' 4 hours ') }}'
+                ) - INTERVAL '{{ var("LOOKBACK", "4 hours") }}'
               FROM
                 {{ this }}
             )
@@ -485,7 +485,7 @@ heal_model AS (
                   SELECT
                     MAX(
                       _inserted_timestamp
-                    ) - INTERVAL '{{ var(' lookback ', ' 4 hours ') }}'
+                    ) - INTERVAL '{{ var("LOOKBACK", "4 hours") }}'
                   FROM
                     {{ this }}
                 )
@@ -531,7 +531,7 @@ heal_model AS (
                   SELECT
                     MAX(
                       _inserted_timestamp
-                    ) - INTERVAL '{{ var(' lookback ', ' 4 hours ') }}'
+                    ) - INTERVAL '{{ var("LOOKBACK", "4 hours") }}'
                   FROM
                     {{ this }}
                 )
