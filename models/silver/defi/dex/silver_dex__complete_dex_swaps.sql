@@ -237,7 +237,32 @@ complete_dex_swaps AS (
       WHEN decimals_out IS NOT NULL THEN amount_out * p2.price
       ELSE NULL
     END AS amount_out_usd,
-    lp.pool_name AS pool_name,
+    CASE
+      WHEN lp.pool_name IS NULL THEN CONCAT(
+        LEAST(
+          COALESCE(
+            symbol_in,
+            CONCAT(SUBSTRING(token_in, 1, 5), '...', SUBSTRING(token_in, 39, 42))
+          ),
+          COALESCE(
+            symbol_out,
+            CONCAT(SUBSTRING(token_out, 1, 5), '...', SUBSTRING(token_out, 39, 42))
+          )
+        ),
+        '-',
+        GREATEST(
+          COALESCE(
+            symbol_in,
+            CONCAT(SUBSTRING(token_in, 1, 5), '...', SUBSTRING(token_in, 39, 42))
+          ),
+          COALESCE(
+            symbol_out,
+            CONCAT(SUBSTRING(token_out, 1, 5), '...', SUBSTRING(token_out, 39, 42))
+          )
+        )
+      )
+      ELSE lp.pool_name
+    END AS pool_name,
     sender,
     tx_to,
     event_index,
