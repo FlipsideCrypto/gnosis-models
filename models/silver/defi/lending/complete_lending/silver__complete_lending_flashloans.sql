@@ -188,7 +188,7 @@ complete_lending_flashloans AS (
     initiator_address AS initiator,
     target_address AS target,
     f.token_address AS flashloan_token,
-    token_symbol AS flashloan_token_symbol,
+    f.symbol AS flashloan_token_symbol,
     flashloan_amount_unadj,
     flashloan_amount,
     ROUND(

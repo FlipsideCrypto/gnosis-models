@@ -11,7 +11,8 @@ WITH contracts AS (
   SELECT
     contract_address,
     token_symbol,
-    token_decimals _inserted_timestamp
+    token_decimals,
+    _inserted_timestamp
   FROM
     {{ ref('silver__contracts') }}
 ),
