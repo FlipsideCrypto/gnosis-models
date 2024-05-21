@@ -187,10 +187,7 @@ complete_lending_liquidations AS (
     origin_to_address,
     origin_function_signature,
     A.contract_address,
-    CASE
-      WHEN platform = 'Compound V3' THEN 'AbsorbCollateral'
-      ELSE 'LiquidationCall'
-    END AS event_name,
+    'LiquidationCall' AS event_name,
     liquidator,
     borrower,
     protocol_collateral_asset AS protocol_market,
@@ -198,16 +195,10 @@ complete_lending_liquidations AS (
     collateral_asset_symbol AS collateral_token_symbol,
     amount_unadj,
     liquidated_amount AS amount,
-    CASE
-      WHEN platform <> 'Compound V3' THEN ROUND(
-        liquidated_amount * p.price,
-        2
-      )
-      ELSE ROUND(
-        liquidated_amount_usd,
-        2
-      )
-    END AS amount_usd,
+    ROUND(
+      liquidated_amount * p.price,
+      2
+    ) AS amount_usd,
     debt_asset AS debt_token,
     debt_asset_symbol AS debt_token_symbol,
     platform,
@@ -216,7 +207,8 @@ complete_lending_liquidations AS (
     A._INSERTED_TIMESTAMP
   FROM
     liquidation_union A
-    LEFT JOIN {{ ref('price__ez_prices_hourly') }} p
+    LEFT JOIN {{ ref('price__ez_prices_hourly') }}
+    p
     ON collateral_asset = p.token_address
     AND DATE_TRUNC(
       'hour',
@@ -245,16 +237,10 @@ heal_model AS (
     collateral_token_symbol,
     amount_unadj,
     amount,
-    CASE
-      WHEN platform <> 'Compound V3' THEN ROUND(
-        amount * p.price,
-        2
-      )
-      ELSE ROUND(
-        amount_usd,
-        2
-      )
-    END AS amount_usd,
+    ROUND(
+      amount * p.price,
+      2
+    ) AS amount_usd_heal,
     debt_token,
     debt_token_symbol,
     platform,
@@ -328,7 +314,29 @@ FINAL AS (
 ) %}
 UNION ALL
 SELECT
-  *
+  tx_hash,
+  block_number,
+  block_timestamp,
+  event_index,
+  origin_from_address,
+  origin_to_address,
+  origin_function_signature,
+  contract_address,
+  event_name,
+  liquidator,
+  borrower,
+  protocol_market,
+  collateral_token,
+  collateral_token_symbol,
+  amount_unadj,
+  amount,
+  amount_usd_heal AS amount_usd,
+  debt_token,
+  debt_token_symbol,
+  platform,
+  blockchain,
+  _LOG_ID,
+  _INSERTED_TIMESTAMP
 FROM
   heal_model
 {% endif %}
@@ -345,4 +353,3 @@ FROM
   FINAL qualify(ROW_NUMBER() over(PARTITION BY _log_id
 ORDER BY
   _inserted_timestamp DESC)) = 1
-

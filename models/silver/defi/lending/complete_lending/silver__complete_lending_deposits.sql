@@ -161,7 +161,7 @@ deposit_union AS (
   FROM
     realt
 ),
-FINAL AS (
+complete_lending_deposits AS (
   SELECT
     tx_hash,
     block_number,
@@ -172,7 +172,6 @@ FINAL AS (
     origin_function_signature,
     A.contract_address,
     CASE
-      WHEN platform = 'Compound V3' THEN 'SupplyCollateral'
       WHEN platform = 'Aave V3' THEN 'Supply'
       ELSE 'Deposit'
     END AS event_name,
@@ -204,7 +203,7 @@ FINAL AS (
 {% if is_incremental() and var(
   'HEAL_MODEL'
 ) %}
-complete_lending_deposits AS (
+heal_model AS (
   SELECT
     tx_hash,
     block_number,
@@ -224,7 +223,7 @@ complete_lending_deposits AS (
     ROUND(
       amount * p.price,
       2
-    ) AS amount_usd,
+    ) AS amount_usd_heal,
     platform,
     t0.blockchain,
     t0._LOG_ID,
@@ -296,7 +295,26 @@ FINAL AS (
 ) %}
 UNION ALL
 SELECT
-  *
+  tx_hash,
+  block_number,
+  block_timestamp,
+  event_index,
+  origin_from_address,
+  origin_to_address,
+  origin_function_signature,
+  contract_address,
+  event_name,
+  protocol_market,
+  depositor,
+  token_address,
+  token_symbol,
+  amount_unadj,
+  amount,
+  amount_usd_heal AS amount_usd,
+  platform,
+  blockchain,
+  _LOG_ID,
+  _INSERTED_TIMESTAMP
 FROM
   heal_model
 {% endif %}

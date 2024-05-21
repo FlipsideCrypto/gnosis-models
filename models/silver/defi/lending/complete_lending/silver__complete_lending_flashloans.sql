@@ -240,13 +240,13 @@ heal_model AS (
     ROUND(
       flashloan_amount * p.price,
       2
-    ) AS flashloan_amount_usd,
+    ) AS flashloan_amount_usd_heal,
     premium_amount_unadj,
     premium_amount,
     ROUND(
       premium_amount * p.price,
       2
-    ) AS premium_amount_usd,
+    ) AS premium_amount_usd_heal,
     platform,
     t0.blockchain,
     t0._LOG_ID,
@@ -360,7 +360,30 @@ FINAL AS (
 ) %}
 UNION ALL
 SELECT
-  *
+  tx_hash,
+  block_number,
+  block_timestamp,
+  event_index,
+  origin_from_address,
+  origin_to_address,
+  origin_function_signature,
+  contract_address,
+  event_name,
+  protocol_market,
+  initiator,
+  target,
+  flashloan_token,
+  flashloan_token_symbol,
+  flashloan_amount_unadj,
+  flashloan_amount,
+  flashloan_amount_usd_heal AS flashloan_amount_usd,
+  premium_amount_unadj,
+  premium_amount,
+  premium_amount_usd_heal AS premium_amount_usd,
+  platform,
+  blockchain,
+  _LOG_ID,
+  _INSERTED_TIMESTAMP
 FROM
   heal_model
 {% endif %}
