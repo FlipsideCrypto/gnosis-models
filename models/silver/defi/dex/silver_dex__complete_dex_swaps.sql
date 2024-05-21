@@ -287,66 +287,54 @@ heal_model AS (
     event_name,
     token_in,
     c1.token_decimals AS decimals_in,
-    CASE
-      WHEN t0.platform = 'curve' THEN COALESCE(
-        c1.token_symbol,
-        t0.symbol_in
-      )
-      ELSE t0.symbol_in
-    END AS symbol_in,
+    c1.token_symbol AS symbol_in,
     amount_in_unadj,
     CASE
-      WHEN decimals_in IS NULL THEN amount_in_unadj
-      ELSE (amount_in_unadj / pow(10, decimals_in))
-    END AS amount_in,
+      WHEN c1.token_decimals IS NULL THEN amount_in_unadj
+      ELSE (amount_in_unadj / pow(10, c1.token_decimals))
+    END AS amount_in_heal,
     CASE
-      WHEN decimals_in IS NOT NULL THEN amount_in * p1.price
+      WHEN c1.token_decimals IS NOT NULL THEN amount_in_heal * p1.price
       ELSE NULL
-    END AS amount_in_usd,
+    END AS amount_in_usd_heal,
     token_out,
     c2.token_decimals AS decimals_out,
-    CASE
-      WHEN t0.platform = 'curve' THEN COALESCE(
-        c2.token_symbol,
-        t0.symbol_out
-      )
-      ELSE t0.symbol_out
-    END AS symbol_out,
+    c2.token_symbol AS symbol_out,
     amount_out_unadj,
     CASE
-      WHEN decimals_out IS NULL THEN amount_out_unadj
-      ELSE (amount_out_unadj / pow(10, decimals_out))
-    END AS amount_out,
+      WHEN c2.token_decimals IS NULL THEN amount_out_unadj
+      ELSE (amount_out_unadj / pow(10, c2.token_decimals))
+    END AS amount_out_heal,
     CASE
-      WHEN decimals_out IS NOT NULL THEN amount_out * p2.price
+      WHEN c2.token_decimals IS NOT NULL THEN amount_out_heal * p2.price
       ELSE NULL
-    END AS amount_out_usd,
+    END AS amount_out_usd_heal,
     CASE
       WHEN lp.pool_name IS NULL THEN CONCAT(
         LEAST(
           COALESCE(
-            symbol_in,
+            c1.token_symbol,
             CONCAT(SUBSTRING(token_in, 1, 5), '...', SUBSTRING(token_in, 39, 42))
           ),
           COALESCE(
-            symbol_out,
+            c2.token_symbol,
             CONCAT(SUBSTRING(token_out, 1, 5), '...', SUBSTRING(token_out, 39, 42))
           )
         ),
         '-',
         GREATEST(
           COALESCE(
-            symbol_in,
+            c1.token_symbol,
             CONCAT(SUBSTRING(token_in, 1, 5), '...', SUBSTRING(token_in, 39, 42))
           ),
           COALESCE(
-            symbol_out,
+            c2.token_symbol,
             CONCAT(SUBSTRING(token_out, 1, 5), '...', SUBSTRING(token_out, 39, 42))
           )
         )
       )
       ELSE lp.pool_name
-    END AS pool_name,
+    END AS pool_name_heal,
     sender,
     tx_to,
     event_index,
@@ -567,7 +555,34 @@ heal_model AS (
 ) %}
 UNION ALL
 SELECT
-  *
+  block_number,
+  block_timestamp,
+  tx_hash,
+  origin_function_signature,
+  origin_from_address,
+  origin_to_address,
+  contract_address,
+  event_name,
+  token_in,
+  decimals_in,
+  symbol_in,
+  amount_in_unadj,
+  amount_in_heal AS amount_in,
+  amount_in_usd_heal AS amount_in_usd,
+  token_out,
+  decimals_out,
+  symbol_out,
+  amount_out_unadj,
+  amount_out_heal AS amount_out,
+  amount_out_usd_heal AS amount_out_usd,
+  pool_name_heal AS pool_name,
+  sender,
+  tx_to,
+  event_index,
+  platform,
+  version,
+  _log_id,
+  _inserted_timestamp
 FROM
   heal_model
 {% endif %}
