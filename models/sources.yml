@@ -13,13 +13,6 @@ sources:
       - name: address_labels
       - name: ez_hourly_prices
       - name: dim_labels
-      - name: ez_hourly_token_prices
-  - name: ethereum
-    database: ethereum
-    schema: core
-    tables:
-      - name: fact_hourly_token_prices
-      - name: ez_hourly_token_prices
   - name: crosschain_silver
     database: "{{ 'crosschain' if target.database == 'GNOSIS' else 'crosschain_dev' }}"
     schema: silver
