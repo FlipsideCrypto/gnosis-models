@@ -1,9 +1,10 @@
+-- depends_on: {{ ref('silver__complete_token_prices') }}
 {{ config(
   materialized = 'incremental',
   incremental_strategy = 'delete+insert',
   unique_key = ['block_number','platform'],
   cluster_by = ['block_timestamp::DATE'],
-  tags = ['reorg','curated']
+  tags = ['reorg','curated','heal']
 ) }}
 
 WITH aave AS (
@@ -31,11 +32,11 @@ WITH aave AS (
   FROM
     {{ ref('silver__aave_repayments') }}
 
-{% if is_incremental() and 'aave' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'aave' not in var('HEAL_MODELS') %}
 WHERE
   _inserted_timestamp >= (
     SELECT
-      MAX(_inserted_timestamp) - INTERVAL '36 hours'
+      MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "4 hours") }}'
     FROM
       {{ this }}
   )
@@ -65,11 +66,11 @@ spark AS (
   FROM
     {{ ref('silver__spark_repayments') }}
 
-{% if is_incremental() and 'spark' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'spark' not in var('HEAL_MODELS') %}
 WHERE
   _inserted_timestamp >= (
     SELECT
-      MAX(_inserted_timestamp) - INTERVAL '36 hours'
+      MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "4 hours") }}'
     FROM
       {{ this }}
   )
@@ -99,11 +100,11 @@ agave AS (
   FROM
     {{ ref('silver__agave_repayments') }}
 
-{% if is_incremental() and 'agave' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'agave' not in var('HEAL_MODELS') %}
 WHERE
   _inserted_timestamp >= (
     SELECT
-      MAX(_inserted_timestamp) - INTERVAL '36 hours'
+      MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "4 hours") }}'
     FROM
       {{ this }}
   )
@@ -133,11 +134,11 @@ realt AS (
   FROM
     {{ ref('silver__realt_repayments') }}
 
-{% if is_incremental() and 'realt' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'realt' not in var('HEAL_MODELS') %}
 WHERE
   _inserted_timestamp >= (
     SELECT
-      MAX(_inserted_timestamp) - INTERVAL '36 hours'
+      MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "4 hours") }}'
     FROM
       {{ this }}
   )
@@ -164,7 +165,7 @@ repayments_union AS (
   FROM
     realt
 ),
-FINAL AS (
+complete_lending_repayments AS (
   SELECT
     tx_hash,
     block_number,
@@ -174,10 +175,7 @@ FINAL AS (
     origin_to_address,
     origin_function_signature,
     A.contract_address,
-    CASE
-      WHEN platform = 'Compound V3' THEN 'Supply'
-      ELSE 'Repay'
-    END AS event_name,
+    'Repay' AS event_name,
     protocol_market,
     payer_address AS payer,
     borrower,
@@ -202,8 +200,128 @@ FINAL AS (
       'hour',
       block_timestamp
     ) = p.hour
-    LEFT JOIN {{ ref('silver__contracts') }} C
-    ON A.token_address = C.contract_address
+),
+
+{% if is_incremental() and var(
+  'HEAL_MODEL'
+) %}
+heal_model AS (
+  SELECT
+    tx_hash,
+    block_number,
+    block_timestamp,
+    event_index,
+    origin_from_address,
+    origin_to_address,
+    origin_function_signature,
+    t0.contract_address,
+    event_name,
+    protocol_market,
+    payer,
+    borrower,
+    t0.token_address,
+    t0.token_symbol,
+    amount_unadj,
+    amount,
+    ROUND(
+      amount * p.price,
+      2
+    ) AS amount_usd_heal,
+    platform,
+    t0.blockchain,
+    t0._LOG_ID,
+    t0._INSERTED_TIMESTAMP
+  FROM
+    {{ this }}
+    t0
+    LEFT JOIN {{ ref('price__ez_prices_hourly') }}
+    p
+    ON t0.token_address = p.token_address
+    AND DATE_TRUNC(
+      'hour',
+      block_timestamp
+    ) = p.hour
+  WHERE
+    CONCAT(
+      t0.block_number,
+      '-',
+      t0.platform
+    ) IN (
+      SELECT
+        CONCAT(
+          t1.block_number,
+          '-',
+          t1.platform
+        )
+      FROM
+        {{ this }}
+        t1
+      WHERE
+        t1.amount_usd IS NULL
+        AND t1._inserted_timestamp < (
+          SELECT
+            MAX(
+              _inserted_timestamp
+            ) - INTERVAL '{{ var("LOOKBACK", "4 hours") }}'
+          FROM
+            {{ this }}
+        )
+        AND EXISTS (
+          SELECT
+            1
+          FROM
+            {{ ref('silver__complete_token_prices') }}
+            p
+          WHERE
+            p._inserted_timestamp > DATEADD('DAY', -14, SYSDATE())
+            AND p.price IS NOT NULL
+            AND p.token_address = t1.token_address
+            AND p.hour = DATE_TRUNC(
+              'hour',
+              t1.block_timestamp
+            )
+        )
+      GROUP BY
+        1
+    )
+),
+{% endif %}
+
+FINAL AS (
+  SELECT
+    *
+  FROM
+    complete_lending_repayments
+
+{% if is_incremental() and var(
+  'HEAL_MODEL'
+) %}
+UNION ALL
+SELECT
+  tx_hash,
+  block_number,
+  block_timestamp,
+  event_index,
+  origin_from_address,
+  origin_to_address,
+  origin_function_signature,
+  contract_address,
+  event_name,
+  protocol_market,
+  payer,
+  borrower,
+  token_address,
+  token_symbol,
+  amount_unadj,
+  amount,
+  amount_usd_heal AS amount_usd,
+  platform,
+  blockchain,
+  _LOG_ID,
+  _INSERTED_TIMESTAMP
+FROM
+  heal_model
+{% endif %}
 )
 SELECT
   *,
