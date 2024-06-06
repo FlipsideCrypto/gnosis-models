@@ -76,4 +76,4 @@ FROM
     m
     ON e.service_id = m.registry_id
 WHERE
-    m.contract_address = '0x48b6af7b12c71f09e2fc8af4855de4ff54e775ca' --Service Registry (AUTONOLAS-SERVICE-V1)
+    m.contract_address = '0x9338b5153ae39bb89f50468e608ed9d764b755fd' --Service Registry (AUTONOLAS-SERVICE-V1)

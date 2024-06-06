@@ -22,7 +22,7 @@ WITH registry_evt AS (
         topics [2] :: STRING AS topic_2,
         topics [3] :: STRING AS topic_3,
         CASE
-            WHEN topic_0 = '0x9169d45eacd63571e315a0504da919b7c89de505493e7b34051802dd0816a069' THEN 'CreateService'
+            WHEN topic_0 = '0xb34c1e02384201736eb4693b9b173306cb41bff12f15894dea5773088e9a3b1c' THEN 'CreateService'
             WHEN topic_0 = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef' THEN 'Transfer'
         END AS event_name,
         DATA,
@@ -32,9 +32,9 @@ WITH registry_evt AS (
     FROM
         {{ ref('silver__logs') }}
     WHERE
-        contract_address = '0x48b6af7b12c71f09e2fc8af4855de4ff54e775ca' --Service Registry (AUTONOLAS-SERVICE-V1)
+        contract_address = '0x9338b5153ae39bb89f50468e608ed9d764b755fd' --Service Registry (AUTONOLAS-SERVICE-V1)
         AND topics [0] :: STRING IN (
-            '0x9169d45eacd63571e315a0504da919b7c89de505493e7b34051802dd0816a069',
+            '0xb34c1e02384201736eb4693b9b173306cb41bff12f15894dea5773088e9a3b1c',
             --CreateService (for services)
             '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef' --Transfer
         )
@@ -109,6 +109,10 @@ services AS (
         r.data,
         r.segmented_data,
         TRY_TO_NUMBER(utils.udf_hex_to_int(r.topic_1)) AS service_id,
+        CONCAT(
+            '0x',
+            r.segmented_data [0] :: STRING
+        ) AS config_hash,
         t.from_address,
         t.to_address AS owner_address,
         m.multisig_address,
@@ -139,6 +143,7 @@ SELECT
     owner_address,
     multisig_address,
     service_id,
+    config_hash,
     _log_id,
     _inserted_timestamp,
     {{ dbt_utils.generate_surrogate_key(

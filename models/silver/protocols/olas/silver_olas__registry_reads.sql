@@ -6,43 +6,8 @@
     tags = ['curated']
 ) }}
 
-WITH unit_contracts AS (
+WITH service_contracts AS (
 
-    SELECT
-        contract_address,
-        unit_id AS registry_id,
-        MAX(block_number) AS block_number
-    FROM
-        {{ ref('silver_olas__unit_registrations') }}
-
-{% if is_incremental() %}
-WHERE
-    _inserted_timestamp >= (
-        SELECT
-            MAX(_inserted_timestamp) - INTERVAL '12 hours'
-        FROM
-            {{ this }}
-    )
-    AND CONCAT(
-        contract_address,
-        '-',
-        registry_id
-    ) NOT IN (
-        SELECT
-            CONCAT(
-                contract_address,
-                '-',
-                function_input
-            )
-        FROM
-            {{ this }}
-    )
-{% endif %}
-GROUP BY
-    1,
-    2
-),
-service_contracts AS (
     SELECT
         contract_address,
         service_id AS registry_id,
@@ -77,17 +42,6 @@ GROUP BY
     1,
     2
 ),
-all_contracts AS (
-    SELECT
-        *
-    FROM
-        unit_contracts
-    UNION ALL
-    SELECT
-        *
-    FROM
-        service_contracts
-),
 function_sigs AS (
     SELECT
         '0xc87b56dd' AS function_sig,
@@ -108,7 +62,7 @@ inputs AS (
                 0)
             ) AS DATA
             FROM
-                all_contracts
+                service_contracts
                 JOIN function_sigs
                 ON 1 = 1
         ),
@@ -132,7 +86,7 @@ inputs AS (
                         '{Authentication}'
                     ),{},
                     rpc_request,
-                    'Vault/prod/ethereum/quicknode/mainnet'
+                    'Vault/prod/gnosis/quicknode/mainnet'
                 ) AS read_output,
                 SYSDATE() AS _inserted_timestamp
             FROM
