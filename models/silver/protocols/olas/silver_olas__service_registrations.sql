@@ -33,7 +33,7 @@ WITH registry_evt AS (
         {{ ref('silver__logs') }}
     WHERE
         contract_address = '0x9338b5153ae39bb89f50468e608ed9d764b755fd' --Service Registry (AUTONOLAS-SERVICE-V1)
-        AND topics [0] :: STRING IN (
+        AND topic_0 IN (
             '0xb34c1e02384201736eb4693b9b173306cb41bff12f15894dea5773088e9a3b1c',
             --CreateService (for services)
             '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef' --Transfer

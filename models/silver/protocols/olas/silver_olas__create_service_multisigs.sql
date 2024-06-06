@@ -40,7 +40,7 @@ FROM
     {{ ref('silver__logs') }}
 WHERE
     contract_address = '0x9338b5153ae39bb89f50468e608ed9d764b755fd' --Service Registry (AUTONOLAS-SERVICE-V1)
-    AND topics [0] :: STRING = '0x2d53f895cd5faf3cddba94a25c2ced2105885b5b37450ff430ffa3cbdf332c74' --CreateMultisigWithAgents
+    AND topic_0 = '0x2d53f895cd5faf3cddba94a25c2ced2105885b5b37450ff430ffa3cbdf332c74' --CreateMultisigWithAgents
     AND tx_status = 'SUCCESS'
 
 {% if is_incremental() %}
