@@ -29,20 +29,20 @@ WITH deposits AS (
             utils.udf_hex_to_int(
                 segmented_data [0]
             )
-        ) AS amount,
-        (amount / pow(10, 18)) :: FLOAT AS amount_adj,
+        ) AS amount_unadj,
+        (amount_unadj / pow(10, 18)) :: FLOAT AS amount_adj,
         TRY_TO_NUMBER(
             utils.udf_hex_to_int(
                 segmented_data [1]
             )
-        ) AS balance,
-        (balance / pow(10, 18)) :: FLOAT AS balance_adj,
+        ) AS balance_unadj,
+        (balance_unadj / pow(10, 18)) :: FLOAT AS balance_adj,
         TRY_TO_NUMBER(
             utils.udf_hex_to_int(
                 segmented_data [2]
             )
-        ) AS available_rewards,
-        (available_rewards / pow(10, 18)) :: FLOAT AS available_rewards_adj,
+        ) AS available_rewards_unadj,
+        (available_rewards_unadj / pow(10, 18)) :: FLOAT AS available_rewards_adj,
         CASE
             WHEN contract_address = '0xee9f19b5df06c7e8bfc7b28745dcf944c504198a' THEN 'Alpha'
             WHEN contract_address = '0x43fb32f25dce34eb76c78c7a42c8f40f84bcd237' THEN 'Coastal'
@@ -86,11 +86,11 @@ SELECT
     contract_address,
     event_name,
     sender_address,
-    amount,
+    amount_unadj,
     amount_adj,
-    balance,
+    balance_unadj,
     balance_adj,
-    available_rewards,
+    available_rewards_unadj,
     available_rewards_adj,
     'OLAS' AS token_symbol,
     '0xce11e14225575945b8e6dc0d4f2dd4c570f79d9f' AS token_address,
