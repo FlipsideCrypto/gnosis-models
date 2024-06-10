@@ -40,8 +40,6 @@ SELECT
     request_id,
     data_payload,
     deliver_link AS metadata_link,
-    _log_id,
-    _inserted_timestamp,
     mech_delivers_id AS fact_mech_activity_id,
     inserted_timestamp,
     modified_timestamp

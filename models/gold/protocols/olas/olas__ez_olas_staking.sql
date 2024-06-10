@@ -53,28 +53,28 @@ WITH base_evt AS (
         {{ ref('silver_olas__olas_staking_withdrawals') }}
 )
 SELECT
-    block_number,
-    block_timestamp,
-    tx_hash,
-    event_index,
-    origin_function_signature,
-    origin_from_address,
-    origin_to_address,
-    contract_address,
-    event_name,
-    withdrawer_address AS staker_address,
-    amount_unadj,
-    amount_adj AS amount,
+    b.block_number,
+    b.block_timestamp,
+    b.tx_hash,
+    b.event_index,
+    b.origin_function_signature,
+    b.origin_from_address,
+    b.origin_to_address,
+    b.contract_address,
+    b.event_name,
+    b.staker_address,
+    b.amount_unadj,
+    b.amount_adj AS amount,
     ROUND(
-        amount_adj * p.price,
+        b.amount_adj * p.price,
         2
     ) AS amount_usd,
-    token_symbol,
-    token_address,
-    program_name,
-    fact_olas_staking_id,
-    inserted_timestamp,
-    modified_timestamp
+    b.token_symbol,
+    b.token_address,
+    b.program_name,
+    b.fact_olas_staking_id,
+    b.inserted_timestamp,
+    b.modified_timestamp
 FROM
     base_evt b
     LEFT JOIN {{ ref('price__ez_prices_hourly') }}

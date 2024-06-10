@@ -12,7 +12,7 @@ SELECT
     r.prompt_link,
     d.deliver_link,
     {{ dbt_utils.generate_surrogate_key(
-        ['r.mech_requests_id','d.mech_deliver_id']
+        ['r.mech_requests_id','d.mech_delivers_id']
     ) }} AS ez_mech_activity_id,
     GREATEST(
         r.inserted_timestamp,
