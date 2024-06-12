@@ -16,6 +16,36 @@ This fact-based table contains all emitted event logs related to registered serv
 
 {% enddocs %}
 
+{% docs olas_ez_olas_bonding_table_doc %}
+
+This convenience table tracks OLAS token bonding events and the amount of OLAS bonded, in addition to other related details. The Autonolas Tokenomics bonding mechanism enables users holding supported LP-pair assets to deposit them into the Autonolas depository smart contract. In return, they receive OLAS tokens at a discount relative to the price quoted on the relevant DEX after a vesting time. For more information, please visit Olas' [Official Documentation](https://docs.autonolas.network/protocol/tokenomics/#incentivizing-software-developers).
+
+{% enddocs %}
+
+{% docs olas_ez_olas_locking_table_doc %}
+
+This convenience table captures the locking of OLAS tokens for both Voting Escrow OLAS (veOLAS) and Burnable Locked OLAS (buOLAS), including information on the amount locked and the duration of the lock-up periods.
+
+{% enddocs %}
+
+{% docs olas_ez_service_donations_table_doc %}
+
+This convenience table records ETH donations made to services within the OLAS ecosystem, including the donor, recipient service, and amount donated, denominated in ETH and USD.
+
+{% enddocs %}
+
+{% docs olas_ez_unit_registrations_table_doc %}
+
+This convenience table contains fact-based records of unit registrations (Agents and Components) within the OLAS protocol, capturing essential information about each registered unit event and includes a join on the dim_registry_metadata table for additional details pertaining to each unit_id, such as name and description.
+
+{% enddocs %}
+
+{% docs olas_fact_pol_transfers_table_doc %}
+
+This fact-based table tracks Protocol Owned Liquidity (POL) transfers, recording the movement of LP tokens owned by the OLAS protocol (Treasury: `0xa0da53447c0f6c4987964d8463da7e6628b30f82`, GnosisSafe Proxy: `0x87cc0d34f6111c8a7a4bdf758a9a715a3675f941`). For more information on the LP tokens being tracked, please visit Olas' [Bonding Documentation](https://bond.olas.network/).
+
+{% enddocs %}
+
 {% docs olas_ez_olas_staking_table_doc %}
 
 This fact-based convenience table contains OLAS token staking events, including deposits (Stake), withdrawals (Unstake), and amount USD where available.
@@ -39,4 +69,3 @@ This fact-based table contains all mech requests (prompts) and delivered data, i
 This convenience table consolidates mech request and delivery activities within the OLAS protocol, combining request and delivery data (`prompt` and `deliver` links) into a unified set of records, emulating the format of the [AIMechs app](https://aimechs.autonolas.network/mech). 
 
 {% enddocs %}
-
