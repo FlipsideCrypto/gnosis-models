@@ -65,7 +65,7 @@ SELECT
     s.owner_address,
     s.multisig_address,
     s.service_id,
-    m.NAME,
+    m.name,
     m.description,
     s.epoch,
     s.nonces,
@@ -77,4 +77,4 @@ FROM
     base_evt s
     LEFT JOIN {{ ref('silver_olas__registry_metadata') }}
     m
-    AND s.service_id = m.registry_id
+    ON s.service_id = m.registry_id
