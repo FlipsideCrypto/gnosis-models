@@ -39,7 +39,7 @@ SELECT
     sender_address,
     request_id,
     data_payload,
-    deliver_link AS metadata_link,
+    delivery_link AS metadata_link,
     mech_delivers_id AS fact_mech_activity_id,
     inserted_timestamp,
     modified_timestamp

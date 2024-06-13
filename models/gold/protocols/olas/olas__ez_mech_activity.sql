@@ -10,7 +10,7 @@ SELECT
     r.request_id,
     r.sender_address,
     r.prompt_link,
-    d.deliver_link,
+    d.delivery_link,
     {{ dbt_utils.generate_surrogate_key(
         ['r.mech_requests_id','d.mech_delivers_id']
     ) }} AS ez_mech_activity_id,

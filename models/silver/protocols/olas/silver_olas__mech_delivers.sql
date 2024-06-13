@@ -35,7 +35,7 @@ SELECT
         segmented_data [3] :: STRING,
         '/',
         request_id
-    ) AS deliver_link,
+    ) AS delivery_link,
     _log_id,
     _inserted_timestamp,
     {{ dbt_utils.generate_surrogate_key(
