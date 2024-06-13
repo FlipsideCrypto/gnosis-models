@@ -30,7 +30,7 @@ WITH decoded_evt AS (
         decoded_flat :owners AS owners,
         decoded_flat :serviceIds AS service_ids,
         ARRAY_SIZE(service_ids) AS num_services,
-        decoded_flat :serviceInactivity AS service_inactivity,
+        decoded_flat :serviceInactivity AS service_inactivities,
         CASE
             WHEN contract_address = '0xee9f19b5df06c7e8bfc7b28745dcf944c504198a' THEN 'Alpha'
             WHEN contract_address = '0x43fb32f25dce34eb76c78c7a42c8f40f84bcd237' THEN 'Coastal'
@@ -59,6 +59,57 @@ AND _inserted_timestamp >= (
         {{ this }}
 )
 {% endif %}
+),
+evt_flat AS (
+    SELECT
+        block_number,
+        block_timestamp,
+        tx_hash,
+        origin_function_signature,
+        origin_from_address,
+        origin_to_address,
+        contract_address,
+        event_index,
+        event_name,
+        multisigs,
+        owners,
+        service_ids,
+        num_services,
+        service_inactivities,
+        epoch,
+        TRY_TO_NUMBER(
+            f1.value :: STRING
+        ) AS service_id,
+        LOWER(
+            f2.value :: STRING
+        ) AS multisig_address,
+        LOWER(
+            f3.value :: STRING
+        ) AS owner_address,
+        TRY_TO_NUMBER(
+            f4.value :: STRING
+        ) AS service_inactivity,
+        program_name,
+        _log_id,
+        _inserted_timestamp
+    FROM
+        decoded_evt,
+        LATERAL FLATTEN(
+            input => service_ids
+        ) AS f1,
+        LATERAL FLATTEN(
+            input => multisigs
+        ) AS f2,
+        LATERAL FLATTEN(
+            input => owners
+        ) AS f3,
+        LATERAL FLATTEN(
+            input => service_inactivities
+        ) AS f4
+    WHERE
+        f1.index = f2.index
+        AND f2.index = f3.index
+        AND f3.index = f4.index
 )
 SELECT
     block_number,
@@ -71,12 +122,16 @@ SELECT
     event_index,
     event_name,
     epoch,
+    service_id,
+    owner_address,
+    multisig_address,
+    service_inactivity,
+    program_name,
+    num_services,
     multisigs,
     owners,
     service_ids,
-    num_services,
-    service_inactivity,
-    program_name,
+    service_inactivities,
     _log_id,
     _inserted_timestamp,
     {{ dbt_utils.generate_surrogate_key(
@@ -86,4 +141,4 @@ SELECT
     SYSDATE() AS modified_timestamp,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    decoded_evt
+    evt_flat

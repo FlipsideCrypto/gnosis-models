@@ -83,8 +83,8 @@ checkpoint_type1 AS (
         ) AS epoch_length,
         TRY_TO_NUMBER(
             decoded_flat :availableRewards :: STRING
-        ) AS available_rewards,
-        (available_rewards / pow(10, 18)) AS available_rewards_adj,
+        ) AS available_rewards_unadj,
+        (available_rewards_unadj / pow(10, 18)) :: FLOAT AS available_rewards_adj,
         decoded_flat :rewards AS rewards,
         decoded_flat :serviceIds AS service_ids,
         ARRAY_SIZE(service_ids) AS num_services,
@@ -118,8 +118,8 @@ checkpoint_type2 AS (
         NULL AS epoch_length,
         TRY_TO_NUMBER(
             decoded_flat :availableRewards :: STRING
-        ) AS available_rewards,
-        (available_rewards / pow(10, 18)) AS available_rewards_adj,
+        ) AS available_rewards_unadj,
+        (available_rewards_unadj / pow(10, 18)) :: FLOAT AS available_rewards_adj,
         decoded_flat :rewards AS rewards,
         decoded_flat :serviceIds AS service_ids,
         ARRAY_SIZE(service_ids) AS num_services,
@@ -151,8 +151,8 @@ checkpoint_type3 AS (
         NULL AS epoch_length,
         TRY_TO_NUMBER(
             decoded_flat :availableRewards :: STRING
-        ) AS available_rewards,
-        (available_rewards / pow(10, 18)) AS available_rewards_adj,
+        ) AS available_rewards_unadj,
+        (available_rewards_unadj / pow(10, 18)) :: FLOAT AS available_rewards_adj,
         NULL AS rewards,
         NULL AS service_ids,
         TRY_TO_NUMBER(
@@ -181,6 +181,45 @@ all_checkpoints AS (
         *
     FROM
         checkpoint_type3
+),
+evt_flat AS (
+    SELECT
+        block_number,
+        block_timestamp,
+        tx_hash,
+        origin_function_signature,
+        origin_from_address,
+        origin_to_address,
+        contract_address,
+        event_index,
+        event_name,
+        epoch,
+        epoch_length,
+        available_rewards_unadj,
+        available_rewards_adj,
+        rewards,
+        service_ids,
+        num_services,
+        TRY_TO_NUMBER(
+            f1.value :: STRING
+        ) AS service_id,
+        TRY_TO_NUMBER(
+            f2.value :: STRING
+        ) AS reward_unadj,
+        (reward_unadj / pow(10, 18)) :: FLOAT AS reward_adj,
+        program_name,
+        _log_id,
+        _inserted_timestamp
+    FROM
+        all_checkpoints,
+        LATERAL FLATTEN(
+            input => service_ids
+        ) AS f1,
+        LATERAL FLATTEN(
+            input => rewards
+        ) AS f2
+    WHERE
+        f1.index = f2.index
 )
 SELECT
     block_number,
@@ -194,12 +233,15 @@ SELECT
     event_name,
     epoch,
     epoch_length,
-    available_rewards,
+    available_rewards_unadj,
     available_rewards_adj,
-    rewards,
-    service_ids,
+    service_id,
+    reward_unadj,
+    reward_adj,
     num_services,
     program_name,
+    rewards,
+    service_ids,
     _log_id,
     _inserted_timestamp,
     {{ dbt_utils.generate_surrogate_key(
@@ -209,4 +251,4 @@ SELECT
     SYSDATE() AS modified_timestamp,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_checkpoints
+    evt_flat
