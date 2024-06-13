@@ -1,7 +1,7 @@
 version: 2
 models:
   - name: olas__ez_mech_activity
-    description: '{{ doc("olas__ez_mech_activity_table_doc") }}'   
+    description: '{{ doc("olas_ez_mech_activity_table_doc") }}'   
     columns:
       - name: REQUEST_ID
         description: '{{ doc("olas_request_id") }}'
