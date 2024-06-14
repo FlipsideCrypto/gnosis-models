@@ -35,7 +35,7 @@ There is more information on how to use dbt docs in the last section of this doc
 - [ez_token_transfers](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.core__ez_token_transfers)
 - [ez_decoded_event_logs](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.core__ez_decoded_event_logs)
 
-### DeFi Tables (gnosis.defi) ###
+### DeFi Tables (gnosis.defi)
 - [ez_dex_swaps](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.defi__ez_dex_swaps)
 - [ez_bridge_activity](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.defi__ez_bridge_activity)
 - [dim_dex_liquidity_pools](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.defi__dim_dex_liquidity_pools)
@@ -52,11 +52,22 @@ There is more information on how to use dbt docs in the last section of this doc
 - [ez_asset_metadata](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.price__ez_asset_metadata)
 - [ez_prices_hourly](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.price__ez_prices_hourly)
 
-### NFT Tables (gnosis.nft) ###
+### NFT Tables (gnosis.nft)
 - [ez_nft_transfers](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.nft__ez_nft_transfers)
 
 ### Stats Tables (gnosis.stats)
 - [ez_core_metrics_hourly](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.stats__ez_core_metrics_hourly)
+
+### Olas Tables (gnosis.olas)
+- [dim_registry_metadata](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.olas__dim_registry_metadata)
+- [fact_service_event_logs](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.olas__fact_service_event_logs)
+- [fact_mech_activity](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.olas__fact_mech_activity)
+- [ez_service_registrations](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.olas__ez_service_registrations)
+- [ez_mech_activity](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.olas__ez_mech_activity)
+- [ez_olas_staking](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.olas__ez_olas_staking)
+- [ez_service_checkpoints](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.olas__ez_service_checkpoints)
+- [ez_service_evictions](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.olas__ez_service_evictions)
+- [ez_service_staking](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.olas__ez_service_staking)
 
 ## **Helpful User-Defined Functions (UDFs)**
 
