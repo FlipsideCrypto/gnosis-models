@@ -72,9 +72,12 @@ SELECT
     s.program_name,
     s.ez_service_staking_id,
     s.inserted_timestamp,
-    s.modified_timestamp
+    GREATEST(
+        s.modified_timestamp,
+        m.modified_timestamp
+    ) AS modified_timestamp
 FROM
     base_evt s
-    LEFT JOIN {{ ref('silver_olas__registry_metadata') }}
+    LEFT JOIN {{ ref('olas__dim_registry_metadata') }}
     m
     ON s.service_id = m.registry_id

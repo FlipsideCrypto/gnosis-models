@@ -74,7 +74,10 @@ SELECT
     b.program_name,
     b.fact_olas_staking_id,
     b.inserted_timestamp,
-    b.modified_timestamp
+    GREATEST(
+        b.modified_timestamp,
+        p.modified_timestamp
+    ) AS modified_timestamp
 FROM
     base_evt b
     LEFT JOIN {{ ref('price__ez_prices_hourly') }}

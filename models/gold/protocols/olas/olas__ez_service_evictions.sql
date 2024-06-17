@@ -26,10 +26,13 @@ SELECT
     s.program_name,
     s.services_evicted_id AS ez_service_evictions_id,
     s.inserted_timestamp,
-    s.modified_timestamp
+    GREATEST(
+        s.modified_timestamp,
+        m.modified_timestamp
+    ) AS modified_timestamp
 FROM
     {{ ref('silver_olas__services_evicted') }}
     s
-    LEFT JOIN {{ ref('silver_olas__registry_metadata') }}
+    LEFT JOIN {{ ref('olas__dim_registry_metadata') }}
     m
     ON s.service_id = m.registry_id
