@@ -73,8 +73,14 @@ SELECT
     s.ez_service_staking_id,
     s.inserted_timestamp,
     GREATEST(
-        s.modified_timestamp,
-        m.modified_timestamp
+        COALESCE(
+            s.modified_timestamp,
+            '1970-01-01' :: TIMESTAMP
+        ),
+        COALESCE(
+            m.modified_timestamp,
+            '1970-01-01' :: TIMESTAMP
+        )
     ) AS modified_timestamp
 FROM
     base_evt s

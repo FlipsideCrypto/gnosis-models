@@ -15,12 +15,24 @@ SELECT
         ['r.mech_requests_id','d.mech_delivers_id']
     ) }} AS ez_mech_activity_id,
     GREATEST(
-        r.inserted_timestamp,
-        d.inserted_timestamp
+        COALESCE(
+            r.inserted_timestamp,
+            '1970-01-01' :: TIMESTAMP
+        ),
+        COALESCE(
+            d.inserted_timestamp,
+            '1970-01-01' :: TIMESTAMP
+        )
     ) AS inserted_timestamp,
     GREATEST(
-        r.modified_timestamp,
-        d.modified_timestamp
+        COALESCE(
+            r.modified_timestamp,
+            '1970-01-01' :: TIMESTAMP
+        ),
+        COALESCE(
+            d.modified_timestamp,
+            '1970-01-01' :: TIMESTAMP
+        )
     ) AS modified_timestamp
 FROM
     {{ ref('silver_olas__mech_requests') }}

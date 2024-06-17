@@ -29,8 +29,14 @@ SELECT
     s.service_checkpoint_id AS ez_service_checkpoints_id,
     s.inserted_timestamp,
     GREATEST(
-        s.modified_timestamp,
-        m.modified_timestamp
+        COALESCE(
+            s.modified_timestamp,
+            '1970-01-01' :: TIMESTAMP
+        ),
+        COALESCE(
+            m.modified_timestamp,
+            '1970-01-01' :: TIMESTAMP
+        )
     ) AS modified_timestamp
 FROM
     {{ ref('silver_olas__service_checkpoint') }}

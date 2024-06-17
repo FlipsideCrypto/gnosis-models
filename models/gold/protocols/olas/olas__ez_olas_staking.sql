@@ -75,8 +75,14 @@ SELECT
     b.fact_olas_staking_id,
     b.inserted_timestamp,
     GREATEST(
-        b.modified_timestamp,
-        p.modified_timestamp
+        COALESCE(
+            b.modified_timestamp,
+            '1970-01-01' :: TIMESTAMP
+        ),
+        COALESCE(
+            p.modified_timestamp,
+            '1970-01-01' :: TIMESTAMP
+        )
     ) AS modified_timestamp
 FROM
     base_evt b
