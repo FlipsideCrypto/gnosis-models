@@ -1,4 +1,5 @@
 -- depends_on: {{ ref('bronze__streamline_transactions') }}
+-- depends_on: {{ ref('bronze__streamline_FR_transactions') }}
 {{ config(
     materialized = 'incremental',
     incremental_strategy = 'delete+insert',
@@ -17,14 +18,10 @@ WITH base AS (
     FROM
 
 {% if is_incremental() %}
-{{ ref('bronze__streamline_transactions') }}
+{{ ref('bronze__streamline_FR_transactions') }}
 WHERE
-    _inserted_timestamp >= (
-        SELECT
-            MAX(_inserted_timestamp) _inserted_timestamp
-        FROM
-            {{ this }}
-    )
+     _partition_by_block_id between 19000000 and 31000000
+    AND block_number between 19000000 and 31000000
     AND IS_OBJECT(DATA)
 {% else %}
     {{ ref('bronze__streamline_FR_transactions') }}
@@ -166,14 +163,14 @@ new_records AS (
         ON t.block_number = r.block_number
         AND t.tx_hash = r.tx_hash
 
-{% if is_incremental() %}
+{# {% if is_incremental() %}
 AND r._INSERTED_TIMESTAMP >= (
     SELECT
         MAX(_inserted_timestamp) :: DATE - 1
     FROM
         {{ this }}
 )
-{% endif %}
+{% endif %} #}
 )
 
 {% if is_incremental() %},

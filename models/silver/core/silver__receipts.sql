@@ -1,4 +1,5 @@
 -- depends_on: {{ ref('bronze__streamline_receipts') }}
+-- depends_on: {{ ref('bronze__streamline_FR_receipts') }}
 {{ config(
     materialized = 'incremental',
     incremental_strategy = 'delete+insert',
@@ -18,14 +19,10 @@ WITH base AS (
     FROM
 
 {% if is_incremental() %}
-{{ ref('bronze__streamline_receipts') }}
+{{ ref('bronze__streamline_FR_receipts') }}
 WHERE
-    _inserted_timestamp >= (
-        SELECT
-            MAX(_inserted_timestamp) _inserted_timestamp
-        FROM
-            {{ this }}
-    )
+     _partition_by_block_id between 19000000 and 31000000
+    AND block_number between 19000000 and 31000000
     AND IS_OBJECT(DATA)
 {% else %}
     {{ ref('bronze__streamline_FR_receipts') }}
