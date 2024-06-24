@@ -21,7 +21,7 @@ WITH base AS (
 {% if is_incremental() %}
 {{ ref('bronze__streamline_FR_receipts') }}
 WHERE
-     _partition_by_block_id between ROUND(19000000,-4) and ROUND(31000000,-4)
+     _partition_by_block_id between 19000000 and 31000000
     AND block_number between 19000000 and 31000000
     AND IS_OBJECT(DATA)
 {% else %}
