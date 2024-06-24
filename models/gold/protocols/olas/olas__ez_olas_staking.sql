@@ -24,7 +24,7 @@ WITH base_evt AS (
         token_symbol,
         token_address,
         program_name,
-        olas_staking_deposits_id AS fact_olas_staking_id,
+        olas_staking_deposits_id AS ez_olas_staking_id,
         inserted_timestamp,
         modified_timestamp
     FROM
@@ -46,7 +46,7 @@ WITH base_evt AS (
         token_symbol,
         token_address,
         program_name,
-        olas_staking_withdrawals_id AS fact_olas_staking_id,
+        olas_staking_withdrawals_id AS ez_olas_staking_id,
         inserted_timestamp,
         modified_timestamp
     FROM
@@ -72,7 +72,7 @@ SELECT
     b.token_symbol,
     b.token_address,
     b.program_name,
-    b.fact_olas_staking_id,
+    b.ez_olas_staking_id,
     b.inserted_timestamp,
     GREATEST(
         COALESCE(
