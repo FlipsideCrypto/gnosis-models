@@ -58,17 +58,6 @@ There is more information on how to use dbt docs in the last section of this doc
 ### Stats Tables (gnosis.stats)
 - [ez_core_metrics_hourly](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.stats__ez_core_metrics_hourly)
 
-### Olas Tables (gnosis.olas)
-- [dim_registry_metadata](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.olas__dim_registry_metadata)
-- [fact_service_event_logs](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.olas__fact_service_event_logs)
-- [fact_mech_activity](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.olas__fact_mech_activity)
-- [ez_service_registrations](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.olas__ez_service_registrations)
-- [ez_mech_activity](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.olas__ez_mech_activity)
-- [ez_olas_staking](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.olas__ez_olas_staking)
-- [ez_service_checkpoints](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.olas__ez_service_checkpoints)
-- [ez_service_evictions](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.olas__ez_service_evictions)
-- [ez_service_staking](https://flipsidecrypto.github.io/gnosis-models/#!/model/model.gnosis_models.olas__ez_service_staking)
-
 ## **Helpful User-Defined Functions (UDFs)**
 
 UDFs are custom functions built by the Flipside team that can be used in your queries to make your life easier. 

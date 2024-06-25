@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: silver_olas__services_staked
+  - name: silver_olas__service_staking
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
