@@ -96,8 +96,8 @@ stake AS (
         utils.udf_hex_to_int(
             segmented_data [0] :: STRING
         ) AS epoch,
-        NULL AS reward,
-        NULL AS available_rewards,
+        NULL AS reward_unadj,
+        NULL AS available_rewards_unadj,
         NULL AS ts_start,
         ARRAY_CONSTRUCT(
             TRY_TO_NUMBER(utils.udf_hex_to_int(segmented_data [3] :: STRING)),
@@ -144,8 +144,8 @@ stake_everest AS (
         CONCAT('0x', SUBSTR(topic_2, 27, 40)) AS owner_address,
         CONCAT('0x', SUBSTR(topic_3, 27, 40)) AS multisig_address,
         NULL AS epoch,
-        NULL AS reward,
-        NULL AS available_rewards,
+        NULL AS reward_unadj,
+        NULL AS available_rewards_unadj,
         NULL AS ts_start,
         ARRAY_CONSTRUCT(
             TRY_TO_NUMBER(utils.udf_hex_to_int(segmented_data [0] :: STRING)),
@@ -184,8 +184,8 @@ unstake AS (
         ) AS epoch,
         utils.udf_hex_to_int(
             segmented_data [2] :: STRING
-        ) AS reward,
-        NULL AS available_rewards,
+        ) AS reward_unadj,
+        NULL AS available_rewards_unadj,
         NULL AS ts_start,
         ARRAY_CONSTRUCT(
             TRY_TO_NUMBER(utils.udf_hex_to_int(segmented_data [4] :: STRING)),
@@ -228,8 +228,8 @@ unstake_everest AS (
         NULL AS epoch,
         utils.udf_hex_to_int(
             segmented_data [1] :: STRING
-        ) AS reward,
-        NULL AS available_rewards,
+        ) AS reward_unadj,
+        NULL AS available_rewards_unadj,
         utils.udf_hex_to_int(
             segmented_data [2] :: STRING
         ) AS ts_start,
@@ -270,10 +270,10 @@ unstake_beta AS (
         ) AS epoch,
         utils.udf_hex_to_int(
             segmented_data [2] :: STRING
-        ) AS reward,
+        ) AS reward_unadj,
         utils.udf_hex_to_int(
             segmented_data [3] :: STRING
-        ) AS available_rewards,
+        ) AS available_rewards_unadj,
         NULL AS ts_start,
         ARRAY_CONSTRUCT(
             TRY_TO_NUMBER(utils.udf_hex_to_int(segmented_data [5] :: STRING)),
@@ -335,8 +335,10 @@ SELECT
     owner_address,
     multisig_address,
     epoch,
-    reward,
-    available_rewards,
+    reward_unadj,
+    (reward_unadj / pow(10, 18)) :: FLOAT AS reward_adj,
+    available_rewards_unadj,
+    (available_rewards_unadj / pow(10, 18)) :: FLOAT AS available_rewards_adj,
     ts_start,
     nonces,
     program_name,

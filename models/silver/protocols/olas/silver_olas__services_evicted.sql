@@ -35,6 +35,9 @@ WITH decoded_evt AS (
             WHEN contract_address = '0xee9f19b5df06c7e8bfc7b28745dcf944c504198a' THEN 'Alpha'
             WHEN contract_address = '0x43fb32f25dce34eb76c78c7a42c8f40f84bcd237' THEN 'Coastal'
             WHEN contract_address = '0x2ef503950be67a98746f484da0bbada339df3326' THEN 'Alpine'
+            WHEN contract_address = '0x5344b7dd311e5d3dddd46a4f71481bd7b05aaa3e' THEN 'Quickstart Beta - Expert'
+            WHEN contract_address = '0x389b46c259631acd6a69bde8b6cee218230bae8c' THEN 'Quickstart Beta - Hobbyist'
+            WHEN contract_address = '0xef44fb0842ddef59d37f85d61a1ef492bba6135d' THEN 'Pearl Beta'
         END AS program_name,
         _log_id,
         _inserted_timestamp
@@ -43,10 +46,16 @@ WITH decoded_evt AS (
     WHERE
         contract_address IN (
             '0xee9f19b5df06c7e8bfc7b28745dcf944c504198a',
-            -- StakingProxy (Alpha)
+            --StakingProxy (Alpha)
             '0x43fb32f25dce34eb76c78c7a42c8f40f84bcd237',
             --ServiceStakingTokenMechUsage (Coastal)
-            '0x2ef503950be67a98746f484da0bbada339df3326' --ServiceStakingTokenMechUsage (Alpine)
+            '0x2ef503950be67a98746f484da0bbada339df3326',
+            --ServiceStakingTokenMechUsage (Alpine)
+            '0x5344b7dd311e5d3dddd46a4f71481bd7b05aaa3e',
+            --Quickstart Beta - Expert
+            '0x389b46c259631acd6a69bde8b6cee218230bae8c',
+            --Quickstart Beta - Hobbyist
+            '0xef44fb0842ddef59d37f85d61a1ef492bba6135d' --Pearl Beta
         )
         AND topic_0 = '0xd19a3d42ed383465e4058c322d9411aeac76ddb8454d22e139fc99808bd56952' --ServicesEvicted
         AND tx_status = 'SUCCESS'
