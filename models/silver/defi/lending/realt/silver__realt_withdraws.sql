@@ -43,7 +43,10 @@ withdraw AS(
         ) :: INTEGER AS withdraw_amount,
         tx_hash,
         'realT' AS realt_version,
-        origin_to_address AS lending_pool_contract,
+        COALESCE(
+            origin_to_address,
+            contract_address
+        ) AS lending_pool_contract,
         _inserted_timestamp,
         _log_id
     FROM
