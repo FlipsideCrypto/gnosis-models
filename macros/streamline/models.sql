@@ -34,7 +34,7 @@
             ) }}
             s
             JOIN meta b
-            ON b.file_name = metadata$filename
+            ON b.file_name = metadata $ filename
             AND b.{{ partition_name }} = s.{{ partition_name }}
         WHERE
             b.{{ partition_name }} = s.{{ partition_name }}
@@ -57,7 +57,7 @@
             )
 {% endmacro %}
 
-{% macro streamline_external_table_FR_query(
+{% macro streamline_external_table_fr_query(
         model,
         partition_function,
         partition_name,
@@ -93,7 +93,7 @@ FROM
     ) }}
     s
     JOIN meta b
-    ON b.file_name = metadata$filename
+    ON b.file_name = metadata $ filename
     AND b.{{ partition_name }} = s.{{ partition_name }}
 WHERE
     b.{{ partition_name }} = s.{{ partition_name }}
