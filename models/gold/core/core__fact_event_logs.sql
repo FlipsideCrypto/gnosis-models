@@ -8,16 +8,28 @@ SELECT
     block_number,
     block_timestamp,
     tx_hash,
-    origin_function_signature,
-    origin_from_address,
-    origin_to_address,
+    1 AS tx_position,
+    -- new column
     event_index,
     contract_address,
     topics,
+    topics [0] AS topic_0,
+    --new column
+    topics [1] AS topic_1,
+    --new column
+    topics [2] AS topic_2,
+    --new column
+    topics [3] AS topic_3,
+    --new column
     DATA,
     event_removed,
-    tx_status,
-    _log_id,
+    origin_from_address,
+    origin_to_address,
+    origin_function_signature,
+    CASE
+        WHEN tx_status = 'SUCCESS' THEN TRUE
+        ELSE FALSE
+    END AS tx_succeeded,
     COALESCE (
         logs_id,
         {{ dbt_utils.generate_surrogate_key(
@@ -31,6 +43,9 @@ SELECT
     COALESCE(
         modified_timestamp,
         '2000-01-01'
-    ) AS modified_timestamp
+    ) AS modified_timestamp,
+    tx_status,
+    --deprecate
+    _log_id --deprecate
 FROM
     {{ ref('silver__logs') }}

@@ -3,18 +3,18 @@
     tags = ['curated']
 ) }}
 
-WITH contracts as (
+WITH contracts AS (
+
     SELECT
         *
     FROM
         {{ ref('silver__contracts') }}
 ),
-
 agave_token_pull AS (
     SELECT
         block_number AS atoken_created_block,
-        origin_from_address as token_creator_address,
-        lower('0x5E15d5E33d318dCEd84Bfe3F4EACe07909bE6d9c') as version_pool,
+        origin_from_address AS token_creator_address,
+        LOWER('0x5E15d5E33d318dCEd84Bfe3F4EACe07909bE6d9c') AS version_pool,
         C.token_symbol AS a_token_symbol,
         regexp_substr_all(SUBSTR(DATA, 3, len(DATA)), '.{64}') AS segmented_data,
         CONCAT('0x', SUBSTR(topics [2] :: STRING, 27, 40)) AS a_token_address,
@@ -27,10 +27,14 @@ agave_token_pull AS (
         CONCAT('0x', SUBSTR(topics [1] :: STRING, 27, 40)) AS underlying_address,
         c2.token_name AS underlying_name,
         c2.token_decimals AS underlying_decimals,
-        l._inserted_timestamp,
-        l._log_id
+        l.modified_timestamp AS _inserted_timestamp,
+        CONCAT(
+            l.tx_hash :: STRING,
+            '-',
+            l.event_index :: STRING
+        ) AS _log_id
     FROM
-        {{ ref('silver__logs') }}
+        {{ ref('core__fact_event_logs') }}
         l
         LEFT JOIN contracts C
         ON a_token_address = C.contract_address
@@ -43,22 +47,22 @@ agave_token_pull AS (
             OR c2.token_symbol = 'GHO'
         )
 
-    {% if is_incremental() %}
-    AND l._inserted_timestamp >= (
-        SELECT
-            MAX(
-                _inserted_timestamp
-            ) - INTERVAL '12 hours'
-        FROM
-            {{ this }}
-    )
-    AND CONCAT('0x', SUBSTR(topics [2] :: STRING, 27, 40)) NOT IN (
+{% if is_incremental() %}
+AND l.modified_timestamp >= (
+    SELECT
+        MAX(
+            _inserted_timestamp
+        ) - INTERVAL '12 hours'
+    FROM
+        {{ this }}
+)
+AND CONCAT('0x', SUBSTR(topics [2] :: STRING, 27, 40)) NOT IN (
     SELECT
         atoken_address
     FROM
         {{ this }}
 )
-    {% endif %}
+{% endif %}
 ),
 agave_token_pull_2 AS (
     SELECT
@@ -80,8 +84,7 @@ agave_token_pull_2 AS (
     FROM
         agave_token_pull
 ),
-
-agave_backfill_1 as (
+agave_backfill_1 AS (
     SELECT
         atoken_created_block,
         version_pool,

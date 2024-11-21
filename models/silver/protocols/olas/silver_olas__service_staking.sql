@@ -17,10 +17,10 @@ WITH all_evt AS (
         origin_to_address,
         contract_address,
         event_index,
-        topics [0] :: STRING AS topic_0,
-        topics [1] :: STRING AS topic_1,
-        topics [2] :: STRING AS topic_2,
-        topics [3] :: STRING AS topic_3,
+        topic_0,
+        topic_1,
+        topic_2,
+        topic_3,
         DATA,
         regexp_substr_all(SUBSTR(DATA, 3, len(DATA)), '.{64}') AS segmented_data,
         CASE
@@ -32,10 +32,14 @@ WITH all_evt AS (
             WHEN contract_address = '0x389b46c259631acd6a69bde8b6cee218230bae8c' THEN 'Quickstart Beta - Hobbyist'
             WHEN contract_address = '0xef44fb0842ddef59d37f85d61a1ef492bba6135d' THEN 'Pearl Beta'
         END AS program_name,
-        _log_id,
-        _inserted_timestamp
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
+        modified_timestamp AS _inserted_timestamp
     FROM
-        {{ ref('silver__logs') }}
+        {{ ref('core__fact_event_logs') }}
     WHERE
         contract_address IN (
             '0xee9f19b5df06c7e8bfc7b28745dcf944c504198a',
@@ -63,7 +67,7 @@ WITH all_evt AS (
             --ServiceUnstaked (Everest)
             '0x6d789d063e079a4c156e77a20008529fc448dca2cd7e5e7a20abf969fffb9226' --ServiceUnstaked (Beta)
         )
-        AND tx_status = 'SUCCESS'
+        AND tx_succeeded
 
 {% if is_incremental() %}
 AND _inserted_timestamp >= (

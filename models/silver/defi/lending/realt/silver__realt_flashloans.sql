@@ -53,10 +53,14 @@ flashloan AS (
             contract_address
         ) AS lending_pool_contract,
         'realT' AS realt_version,
-        _inserted_timestamp,
-        _log_id
+        modified_timestamp AS _inserted_timestamp,
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id
     FROM
-        {{ ref('silver__logs') }}
+        {{ ref('core__fact_event_logs') }}
     WHERE
         topics [0] :: STRING = '0x631042c832b07452973831137f2d73e395028b44b250dedc5abb0ee766e168ac'
 
@@ -76,7 +80,7 @@ AND contract_address IN (
     FROM
         atoken_meta
 )
-AND tx_status = 'SUCCESS' --excludes failed txs
+AND tx_succeeded --excludes failed txs
 )
 SELECT
     tx_hash,

@@ -6,8 +6,8 @@
     tags = ['reorg','curated']
 ) }}
 
-WITH 
-atoken_meta AS (
+WITH atoken_meta AS (
+
     SELECT
         atoken_address,
         version_pool,
@@ -26,7 +26,6 @@ atoken_meta AS (
         {{ ref('silver__spark_tokens') }}
 ),
 flashloan AS (
-
     SELECT
         tx_hash,
         block_number,
@@ -47,10 +46,14 @@ flashloan AS (
             segmented_data [3] :: STRING
         ) :: INTEGER AS premium_quantity,
         utils.udf_hex_to_int(
-            topics[3] :: STRING
+            topics [3] :: STRING
         ) :: INTEGER AS refferalCode,
-        _log_id,
-        _inserted_timestamp,
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
+        modified_timestamp AS _inserted_timestamp,
         COALESCE(
             origin_to_address,
             contract_address
@@ -61,7 +64,7 @@ flashloan AS (
             ELSE asset_1
         END AS spark_market
     FROM
-        {{ ref('silver__logs') }}
+        {{ ref('core__fact_event_logs') }}
     WHERE
         topics [0] :: STRING = '0xefefaba5e921573100900a3ad9cf29f222d995fb3b6045797eaea7521bd8d6f0'
 
@@ -75,8 +78,13 @@ AND _inserted_timestamp >= (
         {{ this }}
 )
 {% endif %}
-AND contract_address IN (SELECT distinct(version_pool) from atoken_meta)
-AND tx_status = 'SUCCESS' --excludes failed txs
+AND contract_address IN (
+    SELECT
+        DISTINCT(version_pool)
+    FROM
+        atoken_meta
+)
+AND tx_succeeded --excludes failed txs
 )
 SELECT
     tx_hash,
