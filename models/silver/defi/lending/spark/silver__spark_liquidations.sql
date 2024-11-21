@@ -5,8 +5,9 @@
     cluster_by = ['block_timestamp::DATE'],
     tags = ['reorg','curated']
 ) }}
-WITH 
-atoken_meta AS (
+
+WITH atoken_meta AS (
+
     SELECT
         atoken_address,
         version_pool,
@@ -25,7 +26,6 @@ atoken_meta AS (
         {{ ref('silver__spark_tokens') }}
 ),
 liquidation AS(
-
     SELECT
         tx_hash,
         block_number,
@@ -46,8 +46,12 @@ liquidation AS(
             segmented_data [1] :: STRING
         ) :: INTEGER AS liquidated_amount,
         CONCAT('0x', SUBSTR(segmented_data [2] :: STRING, 25, 40)) AS liquidator_address,
-        _log_id,
-        _inserted_timestamp,
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
+        modified_timestamp AS _inserted_timestamp,
         'Spark' AS spark_version,
         COALESCE(
             origin_to_address,
@@ -62,7 +66,7 @@ liquidation AS(
             ELSE collateralAsset_1
         END AS collateral_asset
     FROM
-        {{ ref('silver__logs') }}
+        {{ ref('core__fact_event_logs') }}
     WHERE
         topics [0] :: STRING = '0xe413a321e8681d831f4dbccbca790d2952b56f977908e45be37335533e005286'
 
@@ -76,8 +80,13 @@ AND _inserted_timestamp >= (
         {{ this }}
 )
 {% endif %}
-AND contract_address IN (SELECT distinct(version_pool) from atoken_meta)
-AND tx_status = 'SUCCESS' --excludes failed txs
+AND contract_address IN (
+    SELECT
+        DISTINCT(version_pool)
+    FROM
+        atoken_meta
+)
+AND tx_succeeded --excludes failed txs
 )
 SELECT
     tx_hash,
@@ -106,12 +115,12 @@ SELECT
         amd.atoken_address
     ) AS debt_spark_token,
     debt_to_cover_amount / pow(
-    10,
-    amd.underlying_decimals
+        10,
+        amd.underlying_decimals
     ) AS debt_to_cover_amount,
     liquidator_address AS liquidator,
     borrower_address AS borrower,
-    spark_version as platform,
+    spark_version AS platform,
     amc.underlying_symbol AS collateral_token_symbol,
     amd.underlying_symbol AS debt_token_symbol,
     'ethereum' AS blockchain,

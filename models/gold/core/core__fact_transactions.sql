@@ -10,7 +10,8 @@ SELECT
     block_hash,
     tx_hash,
     nonce,
-    POSITION,
+    POSITION AS tx_position,
+    -- new column,
     origin_function_signature,
     from_address,
     to_address,
@@ -19,6 +20,13 @@ SELECT
     value_precise,
     tx_fee,
     tx_fee_precise,
+    CASE
+        WHEN tx_status = 'SUCCESS' THEN TRUE
+        ELSE FALSE
+    END AS tx_succeeded,
+    -- new column
+    tx_type,
+    -- new column
     gas_price,
     effective_gas_price,
     gas AS gas_limit,

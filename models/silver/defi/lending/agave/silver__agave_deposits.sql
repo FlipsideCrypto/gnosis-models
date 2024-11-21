@@ -6,8 +6,8 @@
     tags = ['reorg','curated']
 ) }}
 
-WITH 
-atoken_meta AS (
+WITH atoken_meta AS (
+
     SELECT
         atoken_address,
         version_pool,
@@ -26,7 +26,6 @@ atoken_meta AS (
         {{ ref('silver__agave_tokens') }}
 ),
 deposits AS(
-
     SELECT
         tx_hash,
         block_number,
@@ -52,10 +51,14 @@ deposits AS(
             origin_to_address,
             contract_address
         ) AS lending_pool_contract,
-        _inserted_timestamp,
-        _log_id
+        modified_timestamp AS _inserted_timestamp,
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id
     FROM
-        {{ ref('silver__logs') }}
+        {{ ref('core__fact_event_logs') }}
     WHERE
         topics [0] :: STRING = '0xde6857219544bb5b7746f48ed30be6386fefc61b2f864cacf559893bf50fd951'
 
@@ -69,8 +72,13 @@ AND _inserted_timestamp >= (
         {{ this }}
 )
 {% endif %}
-AND contract_address IN (SELECT distinct(version_pool) from atoken_meta)
-AND tx_status = 'SUCCESS' --excludes failed txs
+AND contract_address IN (
+    SELECT
+        DISTINCT(version_pool)
+    FROM
+        atoken_meta
+)
+AND tx_succeeded --excludes failed txs
 )
 SELECT
     tx_hash,

@@ -5,8 +5,9 @@
     cluster_by = ['block_timestamp::DATE'],
     tags = ['reorg','curated']
 ) }}
-WITH 
-atoken_meta AS (
+
+WITH atoken_meta AS (
+
     SELECT
         atoken_address,
         version_pool,
@@ -25,7 +26,6 @@ atoken_meta AS (
         {{ ref('silver__spark_tokens') }}
 ),
 withdraw AS(
-
     SELECT
         block_number,
         block_timestamp,
@@ -37,12 +37,16 @@ withdraw AS(
         regexp_substr_all(SUBSTR(DATA, 3, len(DATA)), '.{64}') AS segmented_data,
         CONCAT('0x', SUBSTR(topics [1] :: STRING, 27, 40)) AS reserve_1,
         CONCAT('0x', SUBSTR(topics [2] :: STRING, 27, 40)) AS useraddress,
-        CONCAT('0x', SUBSTR(topics [3] :: STRING, 27, 40)) as depositor,
+        CONCAT('0x', SUBSTR(topics [3] :: STRING, 27, 40)) AS depositor,
         utils.udf_hex_to_int(
             segmented_data [0] :: STRING
         ) :: INTEGER AS withdraw_amount,
-        _inserted_timestamp,
-        _log_id,
+        modified_timestamp AS _inserted_timestamp,
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
         tx_hash,
         'Spark' AS spark_version,
         COALESCE(
@@ -54,9 +58,9 @@ withdraw AS(
             ELSE reserve_1
         END AS spark_market
     FROM
-        {{ ref('silver__logs') }}
+        {{ ref('core__fact_event_logs') }}
     WHERE
-        topics [0] :: STRING = '0x3115d1449a7b732c986cba18244e897a450f61e1bb8d589cd2e69e6c8924f9f7' 
+        topics [0] :: STRING = '0x3115d1449a7b732c986cba18244e897a450f61e1bb8d589cd2e69e6c8924f9f7'
 
 {% if is_incremental() %}
 AND _inserted_timestamp >= (
@@ -68,8 +72,13 @@ AND _inserted_timestamp >= (
         {{ this }}
 )
 {% endif %}
-AND contract_address IN (SELECT distinct(version_pool) from atoken_meta)
-AND tx_status = 'SUCCESS' --excludes failed txs
+AND contract_address IN (
+    SELECT
+        DISTINCT(version_pool)
+    FROM
+        atoken_meta
+)
+AND tx_succeeded --excludes failed txs
 )
 SELECT
     tx_hash,
@@ -94,7 +103,7 @@ SELECT
     LOWER(
         depositor
     ) AS depositor_address,
-    spark_version as platform,
+    spark_version AS platform,
     atoken_meta.underlying_symbol AS symbol,
     'ethereum' AS blockchain,
     _log_id,
