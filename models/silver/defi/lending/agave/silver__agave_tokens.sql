@@ -58,6 +58,7 @@ agave_token_pull AS (
     FROM
         {{ this }}
 )
+AND _inserted_timestamp >= SYSDATE() - INTERVAL '7 day'
     {% endif %}
 ),
 agave_token_pull_2 AS (
