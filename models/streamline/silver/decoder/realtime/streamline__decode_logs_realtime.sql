@@ -60,7 +60,7 @@ SELECT
         l.data,
         'address',
         l.contract_address
-    ) AS DATA
+    ) AS DATA 
 FROM
     candidate_logs l
     INNER JOIN {{ ref('silver__complete_event_abis') }} A
