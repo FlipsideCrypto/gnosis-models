@@ -6,8 +6,8 @@
     tags = ['reorg','curated']
 ) }}
 
-WITH 
-atoken_meta AS (
+WITH atoken_meta AS (
+
     SELECT
         atoken_address,
         aave_version_pool,
@@ -26,7 +26,6 @@ atoken_meta AS (
         {{ ref('silver__aave_tokens') }}
 ),
 flashloan AS (
-
     SELECT
         tx_hash,
         block_number,
@@ -38,7 +37,10 @@ flashloan AS (
         contract_address,
         regexp_substr_all(SUBSTR(DATA, 3, len(DATA)), '.{64}') AS segmented_data,
         CONCAT('0x', SUBSTR(topics [1] :: STRING, 27, 40)) AS target_address,
-        origin_to_address AS initiator_address,
+        COALESCE(
+            origin_to_address,
+            CONCAT('0x', SUBSTR(segmented_data [0] :: STRING, 27, 40))
+        ) AS initiator_address,
         CONCAT('0x', SUBSTR(topics [2] :: STRING, 27, 40)) AS aave_market,
         utils.udf_hex_to_int(
             segmented_data [1] :: STRING
@@ -70,7 +72,12 @@ AND _inserted_timestamp >= (
 )
 AND _inserted_timestamp >= SYSDATE() - INTERVAL '7 day'
 {% endif %}
-AND contract_address IN (SELECT distinct(aave_version_pool) from atoken_meta)
+AND contract_address IN (
+    SELECT
+        DISTINCT(aave_version_pool)
+    FROM
+        atoken_meta
+)
 AND tx_status = 'SUCCESS' --excludes failed txs
 )
 SELECT
