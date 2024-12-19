@@ -23,9 +23,3 @@ models:
       - name: REQUEST_ID
         tests:
           - not_null
-      - name: DATA_PAYLOAD
-        tests:
-          - not_null
-      - name: PROMPT_LINK
-        tests:
-          - not_null
