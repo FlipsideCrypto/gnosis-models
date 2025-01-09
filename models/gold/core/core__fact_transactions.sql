@@ -7,14 +7,10 @@
 SELECT
     block_number,
     block_timestamp,
-    block_hash,
     tx_hash,
-    nonce,
-    POSITION AS tx_position,
-    -- new column,
-    origin_function_signature,
     from_address,
     to_address,
+    origin_function_signature,
     VALUE,
     value_precise_raw,
     value_precise,
@@ -27,6 +23,9 @@ SELECT
     -- new column
     tx_type,
     -- new column
+    nonce,
+    POSITION AS tx_position,
+    -- new column,
     gas_price,
     effective_gas_price,
     gas AS gas_limit,
@@ -35,7 +34,6 @@ SELECT
     max_fee_per_gas,
     max_priority_fee_per_gas,
     input_data,
-    tx_status AS status,
     r,
     s,
     v,
@@ -53,6 +51,11 @@ SELECT
     COALESCE(
         modified_timestamp,
         '2000-01-01'
-    ) AS modified_timestamp
+    ) AS modified_timestamp,
+    block_hash,
+    -- deprecate
+    tx_status AS status,
+    -- deprecate
+    POSITION -- deprecate
 FROM
     {{ ref('silver__transactions') }}

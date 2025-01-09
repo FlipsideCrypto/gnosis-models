@@ -8,8 +8,7 @@ SELECT
     block_number,
     block_timestamp,
     tx_hash,
-    1 AS tx_position,
-    -- new column
+    {#tx_position, -- new column #}
     event_index,
     contract_address,
     topics,
@@ -30,6 +29,7 @@ SELECT
         WHEN tx_status = 'SUCCESS' THEN TRUE
         ELSE FALSE
     END AS tx_succeeded,
+    -- new column
     COALESCE (
         logs_id,
         {{ dbt_utils.generate_surrogate_key(

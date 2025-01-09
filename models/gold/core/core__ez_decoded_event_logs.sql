@@ -8,8 +8,7 @@ SELECT
     block_number,
     block_timestamp,
     tx_hash,
-    1 AS tx_position,
-    -- new column
+    {# tx_position, #} -- new column
     event_index,
     contract_address,
     topics,

@@ -14,6 +14,11 @@ WITH xdai_base AS (
         block_number,
         block_timestamp,
         identifier,
+        -- deprecate
+        trace_address,
+        -- new column
+        TYPE,
+        -- new column
         from_address,
         to_address,
         _call_id,
