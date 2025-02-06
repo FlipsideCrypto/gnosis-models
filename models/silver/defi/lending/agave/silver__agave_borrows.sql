@@ -8,6 +8,7 @@
 
 WITH --borrows from agave LendingPool contracts
 atoken_meta AS (
+
     SELECT
         atoken_address,
         version_pool,
@@ -26,7 +27,6 @@ atoken_meta AS (
         {{ ref('silver__agave_tokens') }}
 ),
 borrow AS (
-
     SELECT
         tx_hash,
         block_number,
@@ -58,12 +58,16 @@ borrow AS (
             origin_to_address,
             contract_address
         ) AS lending_pool_contract,
-        _inserted_timestamp,
-        _log_id
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
+        modified_timestamp AS _inserted_timestamp
     FROM
-        {{ ref('silver__logs') }}
+        {{ ref('core__fact_event_logs') }}
     WHERE
-        topics [0] :: STRING  = '0xc6a898309e823ee50bac64e45ca8adba6690e99e7841c45d754e2a38e9019d9b' 
+        topics [0] :: STRING = '0xc6a898309e823ee50bac64e45ca8adba6690e99e7841c45d754e2a38e9019d9b'
 
 {% if is_incremental() %}
 AND _inserted_timestamp >= (
@@ -74,8 +78,13 @@ AND _inserted_timestamp >= (
 )
 AND _inserted_timestamp >= SYSDATE() - INTERVAL '7 day'
 {% endif %}
-AND contract_address IN (SELECT distinct(version_pool) from atoken_meta)
-AND tx_status = 'SUCCESS' --excludes failed txs
+AND contract_address IN (
+    SELECT
+        DISTINCT(version_pool)
+    FROM
+        atoken_meta
+)
+AND tx_succeeded
 )
 SELECT
     tx_hash,
