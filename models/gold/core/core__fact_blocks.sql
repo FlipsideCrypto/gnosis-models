@@ -32,10 +32,10 @@ SELECT
     -- new column
     logs_bloom,
     -- new column
-    withdrawals,
+    {# withdrawals,
     -- new column
     withdrawals_root,
-    -- new column
+    -- new column #}
     COALESCE (
         blocks_id,
         {{ dbt_utils.generate_surrogate_key(

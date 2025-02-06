@@ -42,8 +42,9 @@ SELECT
     COALESCE(
         modified_timestamp,
         '2000-01-01'
-    ) AS modified_timestamp {# tx_status,
+    ) AS modified_timestamp,
+    tx_status,
     --deprecate
-    _log_id --deprecate #}
+    _log_id --deprecate
 FROM
     {{ ref('silver__logs') }}

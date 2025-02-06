@@ -42,13 +42,13 @@ SELECT
     COALESCE(
         modified_timestamp,
         '2000-01-01'
-    ) AS modified_timestamp
-    -- event_type, --deprecate
-    -- from_address as nft_from_address, --deprecate
-    -- to_address as nft_to_address, --deprecate
-    -- contract_address as nft_address, --deprecate
-    -- tokenId, --deprecate
-    -- erc1155_value, --deprecate
-    -- project_name --deprecate
+    ) AS modified_timestamp,
+    event_type, --deprecate
+    from_address as nft_from_address, --deprecate
+    to_address as nft_to_address, --deprecate
+    contract_address as nft_address, --deprecate
+    tokenId, --deprecate
+    erc1155_value, --deprecate
+    project_name --deprecate
 FROM
     {{ ref('silver__nft_transfers') }}
