@@ -18,11 +18,11 @@ WITH decoded_evt AS (
         contract_address,
         event_index,
         event_name,
-        topics [0] :: STRING AS topic_0,
-        topics [1] :: STRING AS topic_1,
-        topics [2] :: STRING AS topic_2,
-        topics [3] :: STRING AS topic_3,
-        decoded_flat,
+        topic_0,
+        topic_1,
+        topic_2,
+        topic_3,
+        decoded_log,
         CASE
             WHEN contract_address = '0xee9f19b5df06c7e8bfc7b28745dcf944c504198a' THEN 'Alpha'
             WHEN contract_address = '0x43fb32f25dce34eb76c78c7a42c8f40f84bcd237' THEN 'Coastal'
@@ -32,10 +32,14 @@ WITH decoded_evt AS (
             WHEN contract_address = '0x389b46c259631acd6a69bde8b6cee218230bae8c' THEN 'Quickstart Beta - Hobbyist'
             WHEN contract_address = '0xef44fb0842ddef59d37f85d61a1ef492bba6135d' THEN 'Pearl Beta'
         END AS program_name,
-        _log_id,
-        _inserted_timestamp
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
+        modified_timestamp AS _inserted_timestamp
     FROM
-        {{ ref('silver__decoded_logs') }}
+        {{ ref('core__ez_decoded_event_logs') }}
     WHERE
         contract_address IN (
             '0xee9f19b5df06c7e8bfc7b28745dcf944c504198a',
@@ -57,7 +61,7 @@ WITH decoded_evt AS (
             '0x06a98bdd4732811ab3214800ed1ada2dce66a2bce301d250c3ca7d6b461ee666',
             '0x21d81d5d656869e8ce3ba8d65526a2f0dbbcd3d36f5f9999eb7c84360e45eced'
         ) --Checkpoint
-        AND tx_status = 'SUCCESS'
+        AND tx_succeeded
 
 {% if is_incremental() %}
 AND _inserted_timestamp >= (
@@ -84,19 +88,19 @@ checkpoint_type1 AS (
         topic_1,
         topic_2,
         topic_3,
-        decoded_flat,
+        decoded_log,
         TRY_TO_NUMBER(
-            decoded_flat :epoch :: STRING
+            decoded_log :epoch :: STRING
         ) AS epoch,
         TRY_TO_NUMBER(
-            decoded_flat :epochLength :: STRING
+            decoded_log :epochLength :: STRING
         ) AS epoch_length,
         TRY_TO_NUMBER(
-            decoded_flat :availableRewards :: STRING
+            decoded_log :availableRewards :: STRING
         ) AS available_rewards_unadj,
         (available_rewards_unadj / pow(10, 18)) :: FLOAT AS available_rewards_adj,
-        decoded_flat :rewards AS rewards,
-        decoded_flat :serviceIds AS service_ids,
+        decoded_log :rewards AS rewards,
+        decoded_log :serviceIds AS service_ids,
         ARRAY_SIZE(service_ids) AS num_services,
         program_name,
         _log_id,
@@ -121,17 +125,17 @@ checkpoint_type2 AS (
         topic_1,
         topic_2,
         topic_3,
-        decoded_flat,
+        decoded_log,
         TRY_TO_NUMBER(
-            decoded_flat :epoch :: STRING
+            decoded_log :epoch :: STRING
         ) AS epoch,
         NULL AS epoch_length,
         TRY_TO_NUMBER(
-            decoded_flat :availableRewards :: STRING
+            decoded_log :availableRewards :: STRING
         ) AS available_rewards_unadj,
         (available_rewards_unadj / pow(10, 18)) :: FLOAT AS available_rewards_adj,
-        decoded_flat :rewards AS rewards,
-        decoded_flat :serviceIds AS service_ids,
+        decoded_log :rewards AS rewards,
+        decoded_log :serviceIds AS service_ids,
         ARRAY_SIZE(service_ids) AS num_services,
         program_name,
         _log_id,
@@ -156,17 +160,17 @@ checkpoint_type3 AS (
         topic_1,
         topic_2,
         topic_3,
-        decoded_flat,
+        decoded_log,
         NULL AS epoch,
         NULL AS epoch_length,
         TRY_TO_NUMBER(
-            decoded_flat :availableRewards :: STRING
+            decoded_log :availableRewards :: STRING
         ) AS available_rewards_unadj,
         (available_rewards_unadj / pow(10, 18)) :: FLOAT AS available_rewards_adj,
         NULL AS rewards,
         NULL AS service_ids,
         TRY_TO_NUMBER(
-            decoded_flat :numServices :: STRING
+            decoded_log :numServices :: STRING
         ) AS num_services,
         program_name,
         _log_id,
