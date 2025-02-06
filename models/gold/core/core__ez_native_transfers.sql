@@ -21,7 +21,6 @@ SELECT
     origin_function_signature,
     native_transfers_id AS ez_native_transfers_id,
     inserted_timestamp,
-    modified_timestamp,
-    identifier --deprecate
+    modified_timestamp {# identifier --deprecate #}
 FROM
     {{ ref('silver__native_transfers') }}

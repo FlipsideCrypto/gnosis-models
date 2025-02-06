@@ -35,8 +35,7 @@ SELECT
     COALESCE(
         modified_timestamp,
         '2000-01-01'
-    ) AS modified_timestamp,
-    token_price,
+    ) AS modified_timestamp {# token_price,
     --deprecate
     has_decimal,
     --deprecate
@@ -44,6 +43,6 @@ SELECT
     --deprecate
     _log_id,
     --deprecate
-    _inserted_timestamp --deprecate
+    _inserted_timestamp --deprecate #}
 FROM
     {{ ref('silver__transfers') }}

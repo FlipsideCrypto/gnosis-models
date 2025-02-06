@@ -48,11 +48,10 @@ SELECT
     COALESCE(
         modified_timestamp,
         '2000-01-01'
-    ) AS modified_timestamp,
-    block_hash,
+    ) AS modified_timestamp {# block_hash,
     --deprecate
     tx_status AS status,
     --deprecate
-    POSITION --deprecate
+    POSITION --deprecate #}
 FROM
     {{ ref('silver__transactions') }}
