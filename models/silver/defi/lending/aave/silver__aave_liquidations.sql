@@ -99,9 +99,9 @@ SELECT
     _inserted_timestamp
 FROM
     liquidation
-    LEFT JOIN atoken_meta amc
+    INNER JOIN atoken_meta amc
     ON liquidation.collateral_asset = amc.underlying_address
-    LEFT JOIN atoken_meta amd
+    INNER JOIN atoken_meta amd
     ON liquidation.debt_asset = amd.underlying_address qualify(ROW_NUMBER() over(PARTITION BY _log_id
 ORDER BY
     _inserted_timestamp DESC)) = 1
