@@ -25,7 +25,7 @@ SELECT
     origin_from_address,
     origin_to_address,
     CASE
-        WHEN tx_status = 'success' THEN TRUE
+        WHEN tx_status = 'SUCCESS' THEN TRUE
         ELSE FALSE
     END AS tx_succeeded,
     -- new column
