@@ -31,13 +31,16 @@ WITH xdai_base AS (
         value_precise AS xdai_value_precise,
         VALUE AS xdai_value,
         tx_position,
-        trace_index
+        trace_index,
+        origin_from_address,
+        origin_to_address,
+        origin_function_signature
     FROM
         {{ ref('core__fact_traces') }}
     WHERE
         xdai_value > 0
-        AND tx_status = 'SUCCESS'
-        AND trace_status = 'SUCCESS'
+        AND tx_succeeded
+        AND trace_succeeded
         AND TYPE NOT IN (
             'DELEGATECALL',
             'STATICCALL'
@@ -51,38 +54,12 @@ AND _inserted_timestamp >= (
         {{ this }}
 )
 {% endif %}
-),
-tx_table AS (
-    SELECT
-        block_number,
-        tx_hash,
-        from_address AS origin_from_address,
-        to_address AS origin_to_address,
-        origin_function_signature
-    FROM
-        {{ ref('silver__transactions') }}
-    WHERE
-        tx_hash IN (
-            SELECT
-                DISTINCT tx_hash
-            FROM
-                xdai_base
-        )
-
-{% if is_incremental() %}
-AND _inserted_timestamp >= (
-    SELECT
-        MAX(_inserted_timestamp) - INTERVAL '72 hours'
-    FROM
-        {{ this }}
-)
-{% endif %}
 )
 SELECT
-    tx_hash AS tx_hash,
-    block_number AS block_number,
-    block_timestamp AS block_timestamp,
-    identifier AS identifier,
+    tx_hash,
+    block_number,
+    block_timestamp,
+    identifier,
     origin_from_address,
     origin_to_address,
     origin_function_signature,
@@ -113,7 +90,3 @@ FROM
         A.block_timestamp
     ) = HOUR
     AND token_address = LOWER('0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d')
-    JOIN tx_table USING (
-        tx_hash,
-        block_number
-    )

@@ -6,8 +6,8 @@
     tags = ['reorg','curated']
 ) }}
 
-WITH 
-atoken_meta AS (
+WITH atoken_meta AS (
+
     SELECT
         atoken_address,
         version_pool,
@@ -26,7 +26,6 @@ atoken_meta AS (
         {{ ref('silver__spark_tokens') }}
 ),
 deposits AS(
-
     SELECT
         tx_hash,
         block_number,
@@ -44,9 +43,8 @@ deposits AS(
         ) :: INTEGER AS refferal,
         CONCAT('0x', SUBSTR(topics [2] :: STRING, 27, 42)) AS userAddress,
         utils.udf_hex_to_int(
-                segmented_data [1] :: STRING
-            ) :: INTEGER
-        AS deposit_quantity,
+            segmented_data [1] :: STRING
+        ) :: INTEGER AS deposit_quantity,
         'Spark' AS spark_version,
         origin_from_address AS depositor_address,
         COALESCE(
@@ -57,10 +55,14 @@ deposits AS(
             WHEN reserve_1 = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
             ELSE reserve_1
         END AS spark_market,
-        _log_id,
-        _inserted_timestamp
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
+        modified_timestamp AS _inserted_timestamp
     FROM
-        {{ ref('silver__logs') }}
+        {{ ref('core__fact_event_logs') }}
     WHERE
         topics [0] :: STRING = '0x2b627736bca15cd5381dcf80b0bf11fd197d01a037c52b927a881a10fb73ba61'
 
@@ -73,8 +75,13 @@ AND _inserted_timestamp >= (
 )
 AND _inserted_timestamp >= SYSDATE() - INTERVAL '7 day'
 {% endif %}
-AND contract_address IN (SELECT distinct(version_pool) from atoken_meta)
-AND tx_status = 'SUCCESS' --excludes failed txs
+AND contract_address IN (
+    SELECT
+        DISTINCT(version_pool)
+    FROM
+        atoken_meta
+)
+AND tx_succeeded
 )
 SELECT
     tx_hash,

@@ -65,10 +65,14 @@ curve_base AS (
                 segmented_data [3] :: STRING
             )
         ) AS tokens_bought,
-        _log_id,
-        _inserted_timestamp
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
+        modified_timestamp AS _inserted_timestamp
     FROM
-        {{ ref('silver__logs') }}
+        {{ ref('core__fact_event_logs') }}
         l
         INNER JOIN pools p
         ON p.pool_address = l.contract_address
@@ -80,7 +84,7 @@ curve_base AS (
             --TokenExchange
             '0xd013ca23e77a65003c2c659c5442c00c805371b7fc1ebd4c206c41d1536bd90b' --TokenExchangeUnderlying
         )
-        AND tx_status = 'SUCCESS'
+        AND tx_succeeded
 
 {% if is_incremental() %}
 AND _inserted_timestamp >= (
@@ -140,7 +144,7 @@ token_transfers AS (
         CONCAT('0x', SUBSTR(topics [1] :: STRING, 27, 40)) AS from_address,
         CONCAT('0x', SUBSTR(topics [2] :: STRING, 27, 40)) AS to_address
     FROM
-        {{ ref('silver__logs') }}
+        {{ ref('core__fact_event_logs') }}
     WHERE
         topics [0] :: STRING = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
         AND tx_hash IN (
@@ -150,16 +154,16 @@ token_transfers AS (
                 curve_base
         )
         AND CONCAT('0x', SUBSTR(topics [2] :: STRING, 27, 40)) <> '0x0000000000000000000000000000000000000000'
-        AND tx_status = 'SUCCESS'
+        AND tx_succeeded
 
 {% if is_incremental() %}
-AND _inserted_timestamp >= (
+AND modified_timestamp >= (
     SELECT
         MAX(_inserted_timestamp) - INTERVAL '12 hours'
     FROM
         {{ this }}
 )
-AND _inserted_timestamp >= SYSDATE() - INTERVAL '7 day'
+AND modified_timestamp >= SYSDATE() - INTERVAL '7 day'
 {% endif %}
 ),
 from_transfers AS (

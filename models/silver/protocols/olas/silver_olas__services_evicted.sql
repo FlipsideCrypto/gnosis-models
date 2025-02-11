@@ -18,19 +18,19 @@ WITH decoded_evt AS (
         contract_address,
         event_index,
         event_name,
-        topics [0] :: STRING AS topic_0,
-        topics [1] :: STRING AS topic_1,
-        topics [2] :: STRING AS topic_2,
-        topics [3] :: STRING AS topic_3,
-        decoded_flat,
+        topic_0,
+        topic_1,
+        topic_2,
+        topic_3,
+        decoded_log,
         TRY_TO_NUMBER(
-            decoded_flat :epoch :: STRING
+            decoded_log :epoch :: STRING
         ) AS epoch,
-        decoded_flat :multisigs AS multisigs,
-        decoded_flat :owners AS owners,
-        decoded_flat :serviceIds AS service_ids,
+        decoded_log :multisigs AS multisigs,
+        decoded_log :owners AS owners,
+        decoded_log :serviceIds AS service_ids,
         ARRAY_SIZE(service_ids) AS num_services,
-        decoded_flat :serviceInactivity AS service_inactivities,
+        decoded_log :serviceInactivity AS service_inactivities,
         CASE
             WHEN contract_address = '0xee9f19b5df06c7e8bfc7b28745dcf944c504198a' THEN 'Alpha'
             WHEN contract_address = '0x43fb32f25dce34eb76c78c7a42c8f40f84bcd237' THEN 'Coastal'
@@ -39,10 +39,14 @@ WITH decoded_evt AS (
             WHEN contract_address = '0x389b46c259631acd6a69bde8b6cee218230bae8c' THEN 'Quickstart Beta - Hobbyist'
             WHEN contract_address = '0xef44fb0842ddef59d37f85d61a1ef492bba6135d' THEN 'Pearl Beta'
         END AS program_name,
-        _log_id,
-        _inserted_timestamp
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
+        modified_timestamp AS _inserted_timestamp
     FROM
-        {{ ref('silver__decoded_logs') }}
+        {{ ref('core__ez_decoded_event_logs') }}
     WHERE
         contract_address IN (
             '0xee9f19b5df06c7e8bfc7b28745dcf944c504198a',
@@ -58,7 +62,7 @@ WITH decoded_evt AS (
             '0xef44fb0842ddef59d37f85d61a1ef492bba6135d' --Pearl Beta
         )
         AND topic_0 = '0xd19a3d42ed383465e4058c322d9411aeac76ddb8454d22e139fc99808bd56952' --ServicesEvicted
-        AND tx_status = 'SUCCESS'
+        AND tx_succeeded
 
 {% if is_incremental() %}
 AND _inserted_timestamp >= (
@@ -67,7 +71,7 @@ AND _inserted_timestamp >= (
     FROM
         {{ this }}
 )
-AND _inserted_timestamp >= SYSDATE() - INTERVAL '7 day'
+AND block_timestamp >= SYSDATE() - INTERVAL '7 day'
 {% endif %}
 ),
 evt_flat AS (

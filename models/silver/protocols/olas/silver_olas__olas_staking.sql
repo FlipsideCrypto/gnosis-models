@@ -17,10 +17,10 @@ WITH deposits AS (
         origin_to_address,
         contract_address,
         event_index,
-        topics [0] :: STRING AS topic_0,
-        topics [1] :: STRING AS topic_1,
-        topics [2] :: STRING AS topic_2,
-        topics [3] :: STRING AS topic_3,
+        topic_0,
+        topic_1,
+        topic_2,
+        topic_3,
         'Deposit' AS event_name,
         DATA,
         regexp_substr_all(SUBSTR(DATA, 3, len(DATA)), '.{64}') AS segmented_data,
@@ -49,10 +49,14 @@ WITH deposits AS (
             WHEN contract_address = '0x2ef503950be67a98746f484da0bbada339df3326' THEN 'Alpine'
             WHEN contract_address = '0x5add592ce0a1b5dcecebb5dcac086cd9f9e3ea5c' THEN 'Everest'
         END AS program_name,
-        _log_id,
-        _inserted_timestamp
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
+        modified_timestamp AS _inserted_timestamp
     FROM
-        {{ ref('silver__logs') }}
+        {{ ref('core__fact_event_logs') }}
     WHERE
         contract_address IN (
             '0xee9f19b5df06c7e8bfc7b28745dcf944c504198a',
@@ -64,7 +68,7 @@ WITH deposits AS (
             '0x5add592ce0a1b5dcecebb5dcac086cd9f9e3ea5c' --ServiceStakingTokenMechUsage (Everest)
         )
         AND topic_0 = '0x36af321ec8d3c75236829c5317affd40ddb308863a1236d2d277a4025cccee1e' --Deposit (erc20)
-        AND tx_status = 'SUCCESS'
+        AND tx_succeeded
 
 {% if is_incremental() %}
 AND _inserted_timestamp >= (
@@ -86,10 +90,10 @@ withdrawals AS (
         origin_to_address,
         contract_address,
         event_index,
-        topics [0] :: STRING AS topic_0,
-        topics [1] :: STRING AS topic_1,
-        topics [2] :: STRING AS topic_2,
-        topics [3] :: STRING AS topic_3,
+        topic_0,
+        topic_1,
+        topic_2,
+        topic_3,
         'Deposit' AS event_name,
         DATA,
         regexp_substr_all(SUBSTR(DATA, 3, len(DATA)), '.{64}') AS segmented_data,
@@ -106,10 +110,14 @@ withdrawals AS (
             WHEN contract_address = '0x2ef503950be67a98746f484da0bbada339df3326' THEN 'Alpine'
             WHEN contract_address = '0x5add592ce0a1b5dcecebb5dcac086cd9f9e3ea5c' THEN 'Everest'
         END AS program_name,
-        _log_id,
-        _inserted_timestamp
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
+        modified_timestamp AS _inserted_timestamp
     FROM
-        {{ ref('silver__logs') }}
+        {{ ref('core__fact_event_logs') }}
     WHERE
         contract_address IN (
             '0xee9f19b5df06c7e8bfc7b28745dcf944c504198a',
@@ -121,7 +129,7 @@ withdrawals AS (
             '0x5add592ce0a1b5dcecebb5dcac086cd9f9e3ea5c' --ServiceStakingTokenMechUsage (Everest)
         )
         AND topic_0 = '0x884edad9ce6fa2440d8a54cc123490eb96d2768479d49ff9c7366125a9424364' --Withdraw (erc20)
-        AND tx_status = 'SUCCESS'
+        AND tx_succeeded
 
 {% if is_incremental() %}
 AND _inserted_timestamp >= (
