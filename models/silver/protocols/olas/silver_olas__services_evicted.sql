@@ -71,7 +71,7 @@ AND _inserted_timestamp >= (
     FROM
         {{ this }}
 )
-AND _inserted_timestamp >= SYSDATE() - INTERVAL '7 day'
+AND block_timestamp >= SYSDATE() - INTERVAL '7 day'
 {% endif %}
 ),
 evt_flat AS (
