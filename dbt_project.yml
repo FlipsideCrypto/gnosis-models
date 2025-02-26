@@ -102,7 +102,7 @@ vars:
   GLOBAL_PROD_DB_NAME: 'gnosis' 
   GLOBAL_NODE_SECRET_PATH: 'Vault/prod/gnosis/quicknode/mainnet'
   GLOBAL_NODE_URL: '{service}/{Authentication}'
-  GLOBAL_BLOCKS_PER_HOUR: 700
+  GLOBAL_BLOCKS_PER_HOUR: 1200
   GLOBAL_USES_STREAMLINE_V1: True
   GLOBAL_USES_SINGLE_FLIGHT_METHOD: True
 
