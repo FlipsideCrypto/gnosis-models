@@ -64,7 +64,7 @@
         {% endif %}
         WHERE
             b.partition_key = s.partition_key
-            {# AND DATA :error IS NULL #}
+            AND DATA :error :code IS NULL
             AND DATA IS NOT NULL
 {% endmacro %}
 
@@ -136,6 +136,6 @@ FROM
     {% endif %}
 WHERE
     b.partition_key = s.{{ partition_join_key }}
-    {# AND DATA :error IS NULL #}
+    AND DATA :error :code IS NULL
     AND DATA IS NOT NULL
 {% endmacro %}
