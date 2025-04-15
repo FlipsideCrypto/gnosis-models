@@ -5,7 +5,7 @@
     meta ={ 
         'database_tags':{
             'table':{
-                'PROTOCOL': 'CELER, HOP, MESON',
+                'PROTOCOL': 'CELER, HOP, MESON, CCIP',
                 'PURPOSE': 'BRIDGE'
         } } }
 ) }}
