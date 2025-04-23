@@ -5,8 +5,8 @@ on:
   workflow_dispatch:
   schedule:
     # Runs “At 18:00 on the 28th of the month.” (see https://crontab.guru)
-    - cron: '0 18 28 * *'
-    
+    - cron: "0 18 28 * *"
+
 env:
   DBT_PROFILES_DIR: ./
 
@@ -22,12 +22,10 @@ env:
 concurrency:
   group: ${{ github.workflow }}
 
-
-
 jobs:
   run_dbt_jobs:
     runs-on: ubuntu-latest
-    environment: 
+    environment:
       name: workflow_test
 
     steps:
@@ -45,6 +43,10 @@ jobs:
       - name: Run DBT Jobs
         run: |
           dbt test -m "gnosis_models,tag:full_test"
-  
 
-
+  notify-failure:
+    needs: [run_dbt_jobs]
+    if: failure()
+    uses: ./.github/workflows/slack_notify.yml
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
