@@ -7,7 +7,8 @@
             'table':{
                 'PROTOCOL': 'CELER, HOP, MESON, CCIP',
                 'PURPOSE': 'BRIDGE'
-        } } }
+        } } },
+    tags = ['gold','defi','bridge','curated','ez']
 ) }}
 
 SELECT
