@@ -112,7 +112,7 @@ a_token_step_2 AS (
         atoken_symbol,
         _inserted_timestamp,
         _log_id,
-        'Aave V3' AS protocol
+        'Spark' AS protocol
     FROM
         a_token_step_1
 )
