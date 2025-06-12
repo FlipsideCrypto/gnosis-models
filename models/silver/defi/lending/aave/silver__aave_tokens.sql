@@ -1,5 +1,6 @@
 {{ config(
     materialized = 'incremental',
+    unique_key = "atoken_address",
     tags = ['silver','defi','lending','curated']
 ) }}
 
@@ -7,11 +8,11 @@ WITH DECODE AS (
 
     SELECT
         block_number AS atoken_created_block,
-        origin_from_address AS token_creator_address,
         contract_address AS a_token_address,
         regexp_substr_all(SUBSTR(DATA, 3, len(DATA)), '.{64}') AS segmented_data,
         CONCAT('0x', SUBSTR(topics [1] :: STRING, 27, 40)) AS underlying_asset,
         CONCAT('0x', SUBSTR(topics [2] :: STRING, 27, 40)) AS aave_version_pool,
+        CONCAT('0x', SUBSTR(segmented_data [0] :: STRING, 25, 40)) AS treasury_address,
         utils.udf_hex_to_int(
             SUBSTR(
                 segmented_data [2] :: STRING,
@@ -25,15 +26,14 @@ WITH DECODE AS (
         utils.udf_hex_to_string (
             segmented_data [9] :: STRING
         ) :: STRING AS atoken_symbol,
+        modified_timestamp AS _inserted_timestamp,
         CONCAT(
             tx_hash :: STRING,
             '-',
             event_index :: STRING
-        ) AS _log_id,
-        modified_timestamp AS _inserted_timestamp
+        ) AS _log_id
     FROM
         {{ ref('core__fact_event_logs') }}
-        l
     WHERE
         topics [0] = '0xb19e051f8af41150ccccb3fc2c2d8d15f4a4cf434f32a559ba75fe73d6eea20b'
 
@@ -58,11 +58,11 @@ AND _inserted_timestamp >= SYSDATE() - INTERVAL '7 day'
 a_token_step_1 AS (
     SELECT
         atoken_created_block,
-        token_creator_address,
         a_token_address,
         segmented_data,
         underlying_asset,
         aave_version_pool,
+        treasury_address,
         atoken_decimals,
         atoken_name,
         atoken_symbol,
@@ -71,7 +71,7 @@ a_token_step_1 AS (
     FROM
         DECODE
     WHERE
-        atoken_name LIKE '%Aave%'
+        treasury_address = '0x3e652e97ff339b73421f824f5b03d75b62f1fb51'
 ),
 debt_tokens AS (
     SELECT
@@ -82,12 +82,12 @@ debt_tokens AS (
         CONCAT('0x', SUBSTR(topics [2] :: STRING, 27, 40)) AS atoken_address,
         CONCAT('0x', SUBSTR(segmented_data [0] :: STRING, 27, 40)) :: STRING AS atoken_stable_debt_address,
         CONCAT('0x', SUBSTR(segmented_data [1] :: STRING, 27, 40)) :: STRING AS atoken_variable_debt_address,
+        modified_timestamp AS _inserted_timestamp,
         CONCAT(
             tx_hash :: STRING,
             '-',
             event_index :: STRING
-        ) AS _log_id,
-        modified_timestamp AS _inserted_timestamp
+        ) AS _log_id
     FROM
         {{ ref('core__fact_event_logs') }}
     WHERE
@@ -102,11 +102,11 @@ debt_tokens AS (
 a_token_step_2 AS (
     SELECT
         atoken_created_block,
-        token_creator_address,
         a_token_address,
         segmented_data,
         underlying_asset,
         aave_version_pool,
+        treasury_address,
         atoken_decimals,
         atoken_name,
         atoken_symbol,
@@ -118,8 +118,8 @@ a_token_step_2 AS (
 )
 SELECT
     A.atoken_created_block,
-    A.token_creator_address,
     A.aave_version_pool,
+    A.treasury_address,
     A.atoken_symbol AS atoken_symbol,
     A.a_token_address AS atoken_address,
     b.atoken_stable_debt_address,
