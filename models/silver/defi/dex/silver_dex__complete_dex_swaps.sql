@@ -27,7 +27,7 @@ WITH sushi AS (
     tx_to,
     event_index,
     platform,
-    'sushi' as protocol,
+    'sushiswap' as protocol,
     'v1' AS version,
     _log_id,
     _inserted_timestamp
