@@ -133,7 +133,6 @@ layerzero_v2 AS (
         destination_chain_id :: STRING AS destination_chain_id,
         destination_chain,
         token_address,
-        NULL AS token_symbol,
         amount_unadj,
         _log_id AS _id,
         inserted_timestamp AS _inserted_timestamp
@@ -204,7 +203,6 @@ stargate_v2 AS (
         destination_chain_id :: STRING AS destination_chain_id,
         destination_chain,
         token_address,
-        NULL AS token_symbol,
         amount_unadj,
         _log_id AS _id,
         inserted_timestamp AS _inserted_timestamp
