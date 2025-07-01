@@ -539,7 +539,7 @@ SELECT
     amount_unadj,
     amount,
     amount_usd,
-    token_is_verified,
+    ifnull(token_is_verified, false) as token_is_verified,
     _id,
     _inserted_timestamp,
     {{ dbt_utils.generate_surrogate_key(
