@@ -27,6 +27,7 @@ agave_token_pull AS (
         CONCAT('0x', SUBSTR(topics [1] :: STRING, 27, 40)) AS underlying_address,
         c2.token_name AS underlying_name,
         c2.token_decimals AS underlying_decimals,
+        l.contract_address,
         CONCAT(
             l.tx_hash :: STRING,
             '-',
@@ -42,10 +43,8 @@ agave_token_pull AS (
         ON underlying_address = c2.contract_address
     WHERE
         topics [0] = '0x3a0ca721fc364424566385a1aa271ed508cc2c0949c2272575fb3013a163a45f'
-        AND (
-            a_token_name LIKE '%Agave%'
-            OR c2.token_symbol = 'GHO'
-        )
+        AND a_token_name LIKE '%Agave%'
+        AND L.contract_address IN ('0x4078be5abe5ad1fb2a3ed9b933798972fa853e4a','0x4a1ac23dc8df045524cf8b59b25d1ccae2ea62f5')
 
 {% if is_incremental() %}
 AND l.modified_timestamp >= (
@@ -80,6 +79,7 @@ agave_token_pull_2 AS (
         underlying_name,
         underlying_decimals,
         underlying_address,
+        contract_address,
         _inserted_timestamp,
         _log_id
     FROM
@@ -100,6 +100,7 @@ agave_backfill_1 AS (
         underlying_address,
         underlying_decimals,
         underlying_name,
+        contract_address,
         _inserted_timestamp,
         _log_id
     FROM
@@ -119,6 +120,7 @@ SELECT
     underlying_address,
     underlying_decimals,
     underlying_name,
+    contract_address,
     _inserted_timestamp,
     _log_id
 FROM
