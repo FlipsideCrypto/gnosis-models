@@ -21,9 +21,10 @@ WITH new_records AS (
         ) AS row_num
     FROM
         {{ ref('silver_olas__registry_reads') }}
-
+WHERE 
+    token_uri_link :: STRING NOT LIKE '%00000000000000000000000000000000000000000000000%'
 {% if is_incremental() %}
-WHERE
+AND (
     _inserted_timestamp > (
         SELECT
             MAX(_inserted_timestamp)
@@ -47,6 +48,7 @@ WHERE
         WHERE
             NAME IS NULL
     )
+)
 {% endif %}
 ),
 uri_calls AS (
