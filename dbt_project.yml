@@ -73,8 +73,6 @@ models:
         +enabled: true
       core:
         +enabled: true # enable subpackages, as needed
-        bronze:
-          +enabled: false
       github_actions:
         +enabled: true
       labels:
